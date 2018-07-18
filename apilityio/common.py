@@ -38,7 +38,7 @@ DEFAULT_LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'formatter': 'standard',
             'class': 'logging.StreamHandler',
         },
