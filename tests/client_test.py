@@ -8,6 +8,11 @@ import apilityio.common as common
 
 TEST_WRONG_KEY_SAMPLE = '123dcfe6-63d3-3cd2-b427-75d1b1c117ed'
 
+
+# To test the API, you have to pass a valid API KEY as an exported environment variable first:
+# export APILITYIO_API_KEY=<YOUR_API_KEY>
+# You can get an API KEY for free registering in APILITYIO_API_KEY
+
 TEST_KEY_SAMPLE = os.environ['APILITYIO_API_KEY']
 
 
