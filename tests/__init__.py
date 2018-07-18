@@ -13,9 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-try:
-    import client_test
-    import client_test_anonymous
-except ImportError:
-    # Python versions above 2.7 can't import this, and they don't need it to run the tests
-    pass
+
+from .client_test import ClientTestCase
+from .client_test_anonymous import ClientTestCase
