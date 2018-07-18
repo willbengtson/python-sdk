@@ -130,5 +130,5 @@ COUNTRIES = {"AF": "Afghanistan", "AX": "\u00c5land Islands", "AL": "Albania", "
              "VA": "Vatican City", "VE": "Venezuela", "VN": "Vietnam", "WF": "Wallis & Futuna", "EH": "Western Sahara",
              "YE": "Yemen", "ZM": "Zambia", "ZW": "Zimbabwe"}
 
-COUNTRY_LIST = [*COUNTRIES]
+COUNTRY_LIST = list(COUNTRIES.keys())
 CONTINENT_LIST = ["EU", "AS", "NA", "AF", "AN", "SA", "OC"]
