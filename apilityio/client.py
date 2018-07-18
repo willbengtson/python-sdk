@@ -17,7 +17,7 @@ import ipaddress
 import requests
 import logging
 import validators
-import datetime
+import time
 
 from uuid import UUID
 
@@ -598,7 +598,7 @@ class Client(object):
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
         else:
-            timestamp = int(datetime.datetime.utcnow().timestamp())
+            timestamp = int(time.time())
         self._ValidatePage(page)
         self._ValidateItems(items)
 
@@ -629,7 +629,7 @@ class Client(object):
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
         else:
-            timestamp = int(datetime.datetime.utcnow().timestamp())
+            timestamp = int(time.time())
         self._ValidatePage(page)
         self._ValidateItems(items)
 
@@ -660,7 +660,7 @@ class Client(object):
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
         else:
-            timestamp = int(datetime.datetime.utcnow().timestamp())
+            timestamp = int(time.time())
         self._ValidatePage(page)
         self._ValidateItems(items)
 

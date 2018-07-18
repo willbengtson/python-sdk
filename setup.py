@@ -26,7 +26,7 @@ from os import path
 
 PACKAGES = ['apilityio', 'tests']
 
-DEPENDENCIES = ['requests>=2.0.0,<3.0.0', 'validators>=0.12.2,<1.0.0']
+DEPENDENCIES = ['requests>=2.0.0,<3.0.0', 'validators>=0.12.2,<1.0.0', 'py2-ipaddress<=3.4.1']
 
 # Note: Breaking change introduced in pyfakefs 3.3.
 TEST_DEPENDENCIES = ['mock>=2.0.0,<3.0.0', 'pyfakefs>=3.2,<3.3',
