@@ -490,6 +490,8 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineContinent(continent)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
+        time.sleep(2)
+
         dto = connection.GetQuarantineContinent()
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
@@ -511,6 +513,8 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineAS(asn)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
+        time.sleep(2)
+
         dto = connection.GetQuarantineAS()
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
@@ -530,6 +534,9 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
+
+        time.sleep(2)
+
         dto = connection.GetQuarantineIP()
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
@@ -546,6 +553,9 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineCountry(country)
         self.assertEqual(dto.status_code, requests.codes.ok)
+
+        time.sleep(2)
+
         dto = connection.GetQuarantineCountry()
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
