@@ -496,7 +496,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.continent == 'AN':
                 self.assertEqual(obj.continent, 'AN')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -517,7 +517,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.asn == '360000':
                 self.assertEqual(obj.asn, '360000')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -536,7 +536,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.ip == '9.9.9.9':
                 self.assertEqual(obj.ip, '9.9.9.9')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -552,7 +552,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.country == 'PN':
                 self.assertEqual(obj.country, 'PN')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -568,7 +568,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.continent == 'AN':
                 self.assertEqual(obj.continent, 'AN')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -584,7 +584,7 @@ class ClientTestCase(unittest.TestCase):
         for obj in dto.quarantine:
             if obj.asn == '360000':
                 self.assertEqual(obj.asn, '360000')
-                self.assertEqual(obj.ttl, 3600)
+                self.assertLessEqual(obj.ttl, 3600)
                 return
         self.assertNotEqual(dto.error, None)
 

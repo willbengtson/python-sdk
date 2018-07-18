@@ -8,3 +8,6 @@ install:
     - python setup.py -q install
 script:
     python -m unittest tests.client_test.ClientTestCase
+notifications:
+  email:
+    - devops@apility.io
