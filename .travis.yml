@@ -5,9 +5,6 @@ python:
     - "3.5"
     - "3.6"
 install:
-    - make deps-dev
-    - pip install coverage
+    - python setup.py -q install
 script:
-    coverage run --source=apilityio setup.py develop test
-after_success:
-    coverage report
+    python -m unittest tests.client_test.ClientTestCase
