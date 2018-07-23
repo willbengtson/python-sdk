@@ -1,18 +1,29 @@
+# Copyright 2017-2018 CAPITAL LAB OU
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
-Copyright 2017-2018 CAPITAL LAB OU
+client module
+-------------
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+This module contains the class Client that implements all the logic of the client to connect to the API services of
+Apility.io.
 
-   http://www.apache.org/licenses/LICENSE-2.0
+All the methods return an Object that encapsulates the HTTP response status code, the error (if any),
+and the collection of objects needed.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 """
+
 import ipaddress
 import requests
 import logging
@@ -27,47 +38,21 @@ import apilityio.errors as errors
 
 _logger = logging.getLogger(__name__)
 
-def ValidateUUID(uuid_string):
-
-    """
-    Validate that a UUID string is in
-    fact a valid uuid.
-
-    Happily, the uuid module does the actual
-    checking for us.
-
-    It is vital that the 'version' kwarg be passed
-    to the UUID() call, otherwise any 32-character
-    hex string is considered valid.
-    """
-
-    try:
-        val = UUID(uuid_string, version=4)
-    except ValueError:
-        # If it's a value error, then the string
-        # is not a valid hex code for a UUID.
-        return False
-
-    return True
-
 class Client(object):
-    """Create web service clients to access the API.
+    """Create the web service client to access the API. This class implements all the logic of the client to connect to the API services of Apility.io.
+
+    Keyword Arguments:
+      - ``api_key``: A string containing your Apility.io API Key.
+      - ``protocol``: A string containing the protocol to connect to the API. Protocols allowed HTTP and HTTPS. Default protocol is HTTPS.
+      - ``host``: A string containing the FQDN of the host runnign the API.
+
+    Raises:
+      :func:`~apilityio.errors.ApilityioValueError`:: If the provided arguments cannot connect to the API Service.
     """
 
     def __init__(self, api_key = None, protocol = common.HTTPS_PROTOCOL ,host = common.DEFAULT_HOST):
-        """Initializes an ApilityioClient.
-
-        Keyword Arguments:
-          api_key: A string containing your Apility.io API Key.
-          protocol: A string containing the protocol to connect to the API. Protocols allowed HTTP and HTTPS.
-              Default protocol is HTTPS.
-          host: A string containing the FQDN of the host runnign the API.
-
-        Raises:
-          ApilityioConnectionError: If the provided arguments cannot connect to the API Service.
-        """
         self._api_key = api_key
-        if api_key is not None and not ValidateUUID(api_key):
+        if api_key is not None and not self._ValidateUUID(api_key):
             raise errors.ApilityioValueError('Not a valid API KEY. Is this a UUID?')
 
         if protocol not in [common.HTTPS_PROTOCOL, common.HTTP_PROTOCOL]:
@@ -75,6 +60,29 @@ class Client(object):
 
         self._protocol = protocol
         self._host = host
+
+    def _ValidateUUID(self, uuid_string):
+
+        """
+        Validate that a UUID string is in
+        fact a valid uuid.
+
+        Happily, the uuid module does the actual
+        checking for us.
+
+        It is vital that the 'version' kwarg be passed
+        to the UUID() call, otherwise any 32-character
+        hex string is considered valid.
+        """
+
+        try:
+            val = UUID(uuid_string, version=4)
+        except ValueError:
+            # If it's a value error, then the string
+            # is not a valid hex code for a UUID.
+            return False
+
+        return True
 
     def _GetURL(self):
         return '%s://%s' % (self._protocol, self._host)
@@ -229,15 +237,26 @@ class Client(object):
             raise errors.ApilityioValueError('Not a valid Continent.')
 
     def GetConnectionData(self):
-        """Return connection data
+        """Return connection data used, the API KEY (if any), the protocol (http or https) and the hostname (api.apility.net by default).
+
+        Returns:
+          - ``api_key``: a string representing the Apility.io API KEY
+          - ``protocol``: a string representing the connection protocol http or https.
+          - ``host``: a string representing the FQDN where the Apility.io API is listening.
         """
         return self._api_key, self._protocol, self._host
 
     def CheckIP(self, ip_address):
-        """Check the IP address versus
+        """Check the IP address belongs to any list of the blacklist databases of Apility.io. It also returns the blacklists where the IP address was found.
 
         Arguments:
-          ip_address: A string containing the IP address to check.
+          - ``ip_address``: A string containing the IP address to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadIPResponse`: an object containing the HTTP status code response, the error (if any) and the list of blacklists where the IP address was found. A 404 HTTP response means that the IP address was not found in any blacklists. A 200 HTTP response means that the IP address was found in one or more blacklists and the developer can check the lists in the blacklists.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid IP address.
         """
         self._ValidateIP(ip_address)
 
@@ -263,10 +282,16 @@ class Client(object):
         return model.BadIPResponse(status_code=response.status_code, error=response.text)
 
     def CheckBatchIP(self, ip_addresses):
-        """Check the Array containing the list of IP address
+        """Check if a list of IP addresses belong to any list of the blacklist databases of Apility.io. It also returns the blacklists where the IP addresses were found.
 
         Arguments:
-          ip_address: An array of string containing the IP addresses to check.
+          - ``ip_addresses``: A list composed of strings containing the IP addresses to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadBatchIPResponse`: an object containing the HTTP status code response, the error (if any) and the list of blacklists where the IP addresses were found. For each IP address there is a list containing the blacklists where the IP was found. If the IP was not found in any blackllist then the list is empty.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid list of IP addresses.
         """
 
         self._ValidateIPList(ip_addresses)
@@ -293,10 +318,16 @@ class Client(object):
 
 
     def GetGeoIP(self, ip_address):
-        """Get the geo location of the IP address
+        """Get the IP address geo-location information.
 
         Arguments:
-          ip_address: A string containing the IP address to check.
+          - ``ip_address``: A string containing the IP address to geo-locate.
+
+        Returns:
+          - :func:`~apilityio.model.GeoIPResponse`: an object containing the HTTP status code response, the error (if any) and the object containing the geo location properties of the IP address.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid IP address.
         """
         self._ValidateIP(ip_address)
 
@@ -318,10 +349,16 @@ class Client(object):
         return model.GeoIPResponse(status_code=response.status_code, error=response.text)
 
     def GetGeoBatchIP(self, ip_addresses):
-        """Get the Geolocation of the Array containing the list of IP address
+        """Get the gelocation information of a list of ip addresses passed as argument.
 
         Arguments:
-          ip_address: An array of string containing the IP addresses to check.
+          - ``ip_addresses``: A list of strings containing the IP addresses to geo-locate.
+
+        Returns:
+          - :func:`~apilityio.model.GeoBatchIPResponse`: an object containing the HTTP status code response, the error (if any) and a list of objects containing the geo location properties of the IP addresses.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a list of valid IP addresses.
         """
 
         self._ValidateIPList(ip_addresses)
@@ -347,11 +384,18 @@ class Client(object):
         return model.GeoBatchIPResponse(status_code=response.status_code, error=response.text)
 
     def CheckDomain(self, domain):
-        """Check the Domain score
+        """Check the Domain and its MX and NS records belong to any list of the blacklist databases of Apility.io. It returns the scoring and blacklists where the Domain info was found.
 
         Arguments:
-          domain: A string containing the domain to check.
+          - ``domain``: A string containing the domain to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadDomainResponse`: an object containing the HTTP status code response, the error (if any) and the scoring and lists of blacklists where the Domain, MX and NS records were found. A 200 HTTP response means that the Domain, MX or NS records were found in one or more blacklists and the developer can check the scoring and the blacklists.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid FQDN.
         """
+
         self._ValidateDomain(domain)
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'baddomain', domain)
@@ -372,10 +416,16 @@ class Client(object):
         return model.BadDomainResponse(status_code=response.status_code, error=response.text)
 
     def CheckBatchDomain(self, domains):
-        """Check the Array containing the list of domains
+        """Check if a list of Domain and its MX and NS records belong to any list of the blacklist databases of Apility.io. It returns a list of the scoring and blacklists where the Domains info were found.
 
         Arguments:
-          domains: An array of string containing the domains to check.
+          - ``domains``: A list composed of strings containing the domains to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadBatchDomainResponse`: an object containing the HTTP status code response, the error (if any) and the list of blacklists where the IP addresses were found. Also the list of domains pairing the scoring and lists of blacklists where the Domain, MX and NS records were found.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid list of domains.
         """
 
         self._ValidateDomainList(domains)
@@ -401,10 +451,16 @@ class Client(object):
         return model.BadBatchDomainResponse(status_code=response.status_code, error=response.text)
 
     def CheckEmail(self, email):
-        """Check the Email score
+        """Check the Email including all tests performed to the Domain plus a full SMTP test on the remote server. It returns the global scoring of the Email and each scoring per test performed.
 
         Arguments:
-          email: A string containing the email to check.
+          - ``email``: A string containing the email to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadEmailResponse`: an object containing the HTTP status code response, the error (if any) and the scoring and lists of blacklists where the Emal, SMTP server, MX and NS records were found. A 200 HTTP response means that the Domain, SMTP Server, MX or NS records were found in one or more blacklists and the developer can check the scoring and the blacklists.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid Email.
         """
         self._ValidateEmail(email)
 
@@ -426,10 +482,16 @@ class Client(object):
         return model.BadEmailResponse(status_code=response.status_code, error=response.text)
 
     def CheckBatchEmail(self, emails):
-        """Check the Array containing the list of emails
+        """Check if a list of Emails including all tests performed to the Domain plus a full SMTP test on the remote server. It returns the global scoring of each Email and each scoring per test performed.
 
         Arguments:
-          emails: An array of string containing the domains to check.
+          - ``emails``: A list composed of strings containing the emails to check.
+
+        Returns:
+          - :func:`~apilityio.model.BadBatchEmailResponse`: an object containing the HTTP status code response, the error (if any). Also the list of emails pairing the scoring and lists of blacklists where the Emails, tests and domains and MX and NS records were found.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid list of emails.
         """
 
         self._ValidateEmailList(emails)
@@ -455,10 +517,16 @@ class Client(object):
         return model.BadBatchEmailResponse(status_code=response.status_code, error=response.text)
 
     def GetASbyIP(self, ip_address):
-        """Get the Autonomous System data of the IP address given
+        """Get the Autonomous System information of a given IP address.
 
         Arguments:
-          ip_address: A string containing the IP address to check.
+          - ``ip_address``: A string containing the IP address to obtain information of its Autonomous System.
+
+        Returns:
+          - :func:`~apilityio.model.ASResponse`: an object containing the HTTP status code response, the error (if any) and the object containing the Autonomous System properties of the IP address.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid IP address.
         """
         self._ValidateIP(ip_address)
 
@@ -480,10 +548,16 @@ class Client(object):
         return model.ASResponse(status_code=response.status_code, error=response.text)
 
     def GetASbyNum(self, asnum):
-        """Get the Autonomous System data of the asnum given
+        """Get the Autonomous System information by its number (ASN).
 
         Arguments:
-          asnum: An integer containing the asnum to check.
+          - ``asnum``: An integer containing the ASN to obtain information of.
+
+        Returns:
+          - :func:`~apilityio.model.ASResponse`: an object containing the HTTP status code response, the error (if any) and the object containing the Autonomous System properties.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not AS number.
         """
         self._ValidateASNum(asnum)
 
@@ -505,10 +579,16 @@ class Client(object):
         return model.ASResponse(status_code=response.status_code, error=response.text)
 
     def GetASBatchByIP(self, ip_addresses):
-        """Get the Autonomous system of the Array containing the list of IP addresses
+        """Get the Autonomous System information of a list of ip addresses passed as argument.
 
         Arguments:
-          ip_addresses: An array of string containing the IP addresses to check.
+          - ``ip_addresses``: A list of strings containing the IP addresses to get AS data.
+
+        Returns:
+          - :func:`~apilityio.model.ASBatchIPResponse`: an object containing the HTTP status code response, the error (if any) and a list of objects containing the Autonomous System properties of the IP addresses.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a list of valid IP addresses.
         """
 
         self._ValidateIPList(ip_addresses)
@@ -534,10 +614,16 @@ class Client(object):
         return model.ASBatchIPResponse(status_code=response.status_code, error=response.text)
 
     def GetASBatchByNum(self, as_numbers):
-        """Get the Autonomous system of the Array containing the list of as_numbers
+        """Get the Autonomous System information of a list of AS numbers passed as argument.
 
         Arguments:
-          as_numbers: An array of integers containing the AS numbers to check.
+          - ``as_numbers``: A list of integers containing the AS numbers to get AS data.
+
+        Returns:
+          - :func:`~apilityio.model.ASBatchIPResponse`: an object containing the HTTP status code response, the error (if any) and a list of objects containing the Autonomous System properties of the AS numbers.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a list of valid AS numbers.
         """
 
         self._ValidateASNumList(as_numbers)
@@ -563,11 +649,18 @@ class Client(object):
         return model.ASBatchNumResponse(status_code=response.status_code, error=response.text)
 
     def GetWhoisIP(self, ip_address):
-        """Get the WHOIS information of the IP address given
+        """Get the WHOIS information of a given IP address.
 
         Arguments:
-          ip_address: A string containing the IP address to check.
+          - ``ip_address``: A string containing the IP address to obtain information of its WHOIS database.
+
+        Returns:
+          - :func:`~apilityio.model.WhoisIPResponse`: an object containing the HTTP status code response, the error (if any) and the object containing the WHOIS properties of the IP address.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not valid IP address.
         """
+
         self._ValidateIP(ip_address)
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'whois/ip', ip_address)
@@ -589,11 +682,21 @@ class Client(object):
 
 
     def GetHistoryIP(self, ip_address, timestamp=None, items=5, page=1):
-        """Get the history of the IP address given in our databases
+        """Get the list of transactions of a given IP address in our database. For experts who wish to know the historical activity of the given IP address in our database.
 
         Arguments:
-          ip_address: A string containing the IP address to check.
+          - ``ip_address``: A string containing the IP address to obtain the historical information.
+          - ``page``: (Optional) An integer starting with 1 to paginate the results of the query.
+          - ``items``: (Optional) An integer with the number of items to return per page. From five to two hundred as maximum.
+          - ``timestamp``: (Optional) An integer as UNIX time in seconds to limit the search. The search will be filtered by values less or equal than ``timestamp``.
+
+        Returns:
+          - :func:`~apilityio.model.HistoryIPResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all historical information.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid IP address, page, items or timestamp.
         """
+
         self._ValidateIP(ip_address)
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
@@ -620,11 +723,21 @@ class Client(object):
         return model.HistoryIPResponse(status_code=response.status_code, error=response.text)
 
     def GetHistoryDomain(self, domain, timestamp=None, items=5, page=1):
-        """Get the history of the Domain address given in our databases
+        """Get the list of transactions of a given Domain in our database. For experts who wish to know the historical activity of the given domain in our database.
 
         Arguments:
-          domain: A string containing the domain to check.
+          - ``domain``: A string containing the FQDN to obtain the historical information.
+          - ``page``: (Optional) An integer starting with 1 to paginate the results of the query.
+          - ``items``: (Optional) An integer with the number of items to return per page. From five to two hundred as maximum.
+          - ``timestamp``: (Optional) An integer as UNIX time in seconds to limit the search. The search will be filtered by values less or equal than ``timestamp``.
+
+        Returns:
+          - :func:`~apilityio.model.HistoryDomainResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all historical information.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid FQDN, page, items or timestamp.
         """
+
         self._ValidateDomain(domain)
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
@@ -651,11 +764,21 @@ class Client(object):
         return model.HistoryDomainResponse(status_code=response.status_code, error=response.text)
 
     def GetHistoryEmail(self, email, timestamp=None, items=5, page=1):
-        """Get the history of the Email address given in our databases
+        """Get the list of transactions of a given Email in our database. For experts who wish to know the historical activity of the given Email in our database.
 
         Arguments:
-          email: A string containing the Email to check.
+          - ``email``: A string containing the Email to obtain the historical information.
+          - ``page``: (Optional) An integer starting with 1 to paginate the results of the query.
+          - ``items``: (Optional) An integer with the number of items to return per page. From five to two hundred as maximum.
+          - ``timestamp``: (Optional) An integer as UNIX time in seconds to limit the search. The search will be filtered by values less or equal than ``timestamp``.
+
+        Returns:
+          - :func:`~apilityio.model.HistoryEmailResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all historical information.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid Email, page, items or timestamp.
         """
+
         self._ValidateEmail(email)
         if timestamp:
             self._ValidateTimestampSeconds(timestamp)
@@ -682,9 +805,13 @@ class Client(object):
         return model.HistoryEmailResponse(status_code=response.status_code, error=response.text)
 
     def GetQuarantineIP(self):
-        """Get the list of IP address quarantined
+        """Get the list of IP addresses in the quarantine. Quarantine is a private exclusion lists based on user IP address properties.
+
+        Returns:
+          - :func:`~apilityio.model.QuarantineIPResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all the IP addresses in the quarantine.
 
         """
+
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/ip')
 
         response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
@@ -703,9 +830,13 @@ class Client(object):
         return model.QuarantineIPResponse(status_code=response.status_code, error=response.text)
 
     def GetQuarantineCountry(self):
-        """Get the list of Countries quarantined
+        """Get the list of countries in the quarantine. Quarantine is a private exclusion lists based on user IP address properties. In this case, the country the IP belongs to.
+
+        Returns:
+          - :func:`~apilityio.model.QuarantineCountryResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all the countries in the quarantine.
 
         """
+
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/country')
 
         response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
@@ -724,9 +855,13 @@ class Client(object):
         return model.QuarantineCountryResponse(status_code=response.status_code, error=response.text)
 
     def GetQuarantineContinent(self):
-        """Get the list of Continents quarantined
+        """Get the list of continents in the quarantine. Quarantine is a private exclusion lists based on user IP address properties. In this case, the continent the IP belongs to.
+
+        Returns:
+          - :func:`~apilityio.model.QuarantineContinentResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all the continents in the quarantine.
 
         """
+
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/continent')
 
         response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
@@ -745,9 +880,13 @@ class Client(object):
         return model.QuarantineContinentResponse(status_code=response.status_code, error=response.text)
 
     def GetQuarantineAS(self):
-        """Get the list of Autonomous Systems quarantined
+        """Get the list of Autonomous Systems in the quarantine. Quarantine is a private exclusion lists based on user IP address properties. In this case, the AS the IP belongs to.
+
+        Returns:
+          - :func:`~apilityio.model.QuarantineASResponse`: an object containing the HTTP status code response, the error (if any) and the object containing all the AS in the quarantine.
 
         """
+
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/as')
 
         response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
@@ -784,8 +923,17 @@ class Client(object):
         return model.Response(status_code=response.status_code, error=response.text)
 
     def AddQuarantineIP(self, ip_address, ttl=3600):
-        """Add an IP address to the list of quarantined IP addresses.
+        """Add an IP address for  a given time to live in the quarantine list.
 
+        Arguments:
+          - ``ip_address``: A string containing a valid IP address to include in the QUARANTINE-IP list.
+          - ``ttl``: (Optional) An integer as in seconds to limit the time to live the IP address in the list. By default is 3600 seconds. Zero value if the IP address will never expire in the list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any).
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid IP address or TTL value.
         """
 
         self._ValidateIP(ip_address)
@@ -795,8 +943,17 @@ class Client(object):
         return self._AddQuarantineObject(object_type, ip_address, ttl)
 
     def AddQuarantineCountry(self, country, ttl=3600):
-        """Add a country to the list of quarantined countries' IP addresses.
+        """Add a country for a given time to live in the quarantine list.
 
+        Arguments:
+          - ``country``: A string containing a valid ISO-3166-1 country  to include in the QUARANTINE-IP list.
+          - ``ttl``: (Optional) An integer as in seconds to limit the time to live the country in the list. By default is 3600 seconds. Zero value if the country will never expire in the list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any).
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid country code or TTL value.
         """
 
         self._ValidateCountry(country)
@@ -806,8 +963,17 @@ class Client(object):
         return self._AddQuarantineObject(object_type, country, ttl)
 
     def AddQuarantineContinent(self, continent, ttl=3600):
-        """Add a continent to the list of quarantined continents' IP addresses.
+        """Add a continent for a given time to live in the quarantine list.
 
+        Arguments:
+          - ``continent``: A string containing a valid continent  to include in the QUARANTINE-CONTINENT list. Valid codes are EU, AS, NA, AF, AN, SA, OC.
+          - ``ttl``: (Optional) An integer as in seconds to limit the time to live the continent in the list. By default is 3600 seconds. Zero value if the continent will never expire in the list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any).
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid continent code or TTL value.
         """
 
         self._ValidateContinent(continent)
@@ -817,8 +983,17 @@ class Client(object):
         return self._AddQuarantineObject(object_type, continent, ttl)
 
     def AddQuarantineAS(self, asnum, ttl=3600):
-        """Add a AS to the list of quarantined ASs' IP addresses.
+        """Add an Autonomous System number for a given time to live in the quarantine list.
 
+        Arguments:
+          - ``asnum``: An integer containing a valid Autonomous System Number (ASN  to include in the QUARANTINE-AS list.
+          - ``ttl``: (Optional) An integer as in seconds to limit the time to live the AS in the list. By default is 3600 seconds. Zero value if the AS will never expire in the list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any).
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided arguments are not a valid ASN or TTL value.
         """
 
         self._ValidateASNum(asnum)
@@ -841,9 +1016,18 @@ class Client(object):
         return model.Response(status_code=response.status_code, error=response.text)
 
     def DeleteQuarantineIP(self, ip_address):
-        """Delete an IP address of the list of quarantined IP addresses.
+        """Delete an IP address from the quarantine list.
 
+        Arguments:
+          - ``ip_address``: A string containing a valid IP address to remove of the QUARANTINE-IP list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any). If the IP address does not exists, it will also return a 200 status code.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a valid IP address.
         """
+
 
         self._ValidateIP(ip_address)
         object_type = 'ip'
@@ -851,8 +1035,16 @@ class Client(object):
         return self._DeleteQuarantineObject(object_type, ip_address)
 
     def DeleteQuarantineCountry(self, country):
-        """Delete a Country of the list of quarantined countries' IP addresses.
+        """Delete a country from the quarantine list.
 
+        Arguments:
+          - ``country``: A string containing a valid ISO-3166-1 country code to remove of the QUARANTINE-COUNTRY list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any). If the country does not exists, it will also return a 200 status code.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a valid country code.
         """
 
         self._ValidateCountry(country)
@@ -861,8 +1053,16 @@ class Client(object):
         return self._DeleteQuarantineObject(object_type, country)
 
     def DeleteQuarantineContinent(self, continent):
-        """Delete a Continent of the list of quarantined continents' IP addresses.
+        """Delete a continent from the quarantine list.
 
+        Arguments:
+          - ``continent``: A string containing a valid continent code to remove of the QUARANTINE-CONTINENT list. Valid codes are EU, AS, NA, AF, AN, SA, OC.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any). If the continent does not exists, it will also return a 200 status code.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a valid continent code.
         """
 
         self._ValidateContinent(continent)
@@ -871,8 +1071,16 @@ class Client(object):
         return self._DeleteQuarantineObject(object_type, continent)
 
     def DeleteQuarantineAS(self, asn):
-        """Delete a AS of the list of quarantined ASs' IP addresses.
+        """Delete an Autonomous System from the quarantine list.
 
+        Arguments:
+          - ``asn``: A string containing a valid Autonomous System Number (ASN) to remove of the QUARANTINE-AS list.
+
+        Returns:
+          - :func:`~apilityio.model.Response`: an object containing the HTTP status code response and the error (if any). If the ASN does not exists, it will also return a 200 status code.
+
+        Raises:
+          - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a valid ASN.
         """
 
         self._ValidateASNum(asn)
