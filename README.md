@@ -1,5 +1,8 @@
-The Apility.io Python Client Libraries
-======================================
+Apility.io Python Client Library
+================================
+
+Introduction
+------------
 
 Apility.io can be defined as Threat Intelligence SaaS for developers and product companies that want to know in realtime if their existing or potential users have been classified as 'abusers' by one or more of these lists.
 
@@ -7,7 +10,7 @@ Automatic extraction processes extracts all the information in realtime, keeping
 
 
 What does Apility.io offer?
-===========================
+---------------------------
 
 Apility.io offers an extremely simple and minimalistic API to access in realtime to these lists and do the following simple question about the resource?
 
@@ -22,36 +25,26 @@ A bad resource implies some kind of action from developers' side. A clean resour
 
 
 Supported Python Versions
-=========================
+-------------------------
 
-This library is supported for Python 2 and 3, for versions 2.7+ and 3.4+
-respectively. It is recommended that Python 2 users use python 2.7.9+ to take
-advantage of the SSL Certificate Validation feature that is not included in
-earlier versions.
+This library is supported for Python 2 and 3, for versions 2.7+ and 3.4+ respectively. It is recommended that Python 2 users use python 2.7.9+ to take advantage of the SSL Certificate Validation feature that is not included in earlier versions.
 
 Installation
-============
+------------
 
-You have two options for installing the Apility.io Python Client Libraries:
+You can install the Apility.io Python Client Library with _pip_:
 
-* Install with a tool such as pip::
+::
+    $ sudo pip install apilityio-lib
 
-  $ sudo pip install apilityio
-
-* Install manually after downloading and extracting the tarball::
-
-  $ sudo python setup.py install
+API Documentation
+-----------------
+You can read the Python documentatio here: https://github.com/Apilityio/python-lib/releases
 
 Examples
-========
-
-If you would like to obtain example code for any of the included
-client libraries, you can find it on our
-`downloads page <https://github.com/Apilityio/python-lib/releases>`_.
+--------
+If you would like to obtain example code for any of the included client libraries, you can find it on our _`downloads page <https://github.com/Apilityio/python-lib/releases>`_.
 
 Contact Us
-==========
-
-Do you have an issue using the Apilityio Client Libraries? Or perhaps some
-feedback for how we can improve them? Feel free to let us know on our
-`issue tracker <https://github.com/Apilityio/python-lib/issues>`_.
+----------
+Do you have an issue using the Apilityio Client Libraries? Or perhaps some feedback for how we can improve them? Feel free to let us know on our _`issue tracker <https://github.com/Apilityio/python-lib/issues>`_.
