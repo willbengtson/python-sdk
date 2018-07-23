@@ -27,7 +27,7 @@ Indices and tables
 Introduction
 ------------
 
-Apility.io can be defined as Threat Intelligence SaaS for developers and product companies that want to know in realtime if their existing or potential users have been classified as 'abusers' by one or more of these lists.
+https://Apility.io can be defined as Threat Intelligence SaaS for developers and product companies that want to know in realtime if their existing or potential users have been classified as 'abusers' by one or more of these lists.
 
 Automatic extraction processes extracts all the information in realtime, keeping the most up to date data available, saving yourself the hassle of extract and update regularly all these lists and the data.
 
@@ -45,6 +45,19 @@ The answers to this question can be:
 * NO: The resource cannot be found in any abusers' list. This is a clean resource.
 
 A bad resource implies some kind of action from developers' side. A clean resource does not need any action from their side.
+
+How to install
+--------------
+You can read the instructions to install in :ref:`installation`.
+
+API Documentation
+-----------------
+You can read the Python documentation :ref:`apireference`.
+
+Quickstart
+----------
+How to start with the Python API quickly :ref:`quickstart`.
+
 
 
 Contact Us

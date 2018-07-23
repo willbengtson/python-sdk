@@ -1,3 +1,5 @@
+.. _installation:
+
 Installation
 ============
 
@@ -9,16 +11,24 @@ This library is supported for Python 2 and 3, for versions 2.7+ and 3.4+ respect
 Installation
 ------------
 
-You can install the Apility.io Python Client Library with _pip_:
+You can install the Apility.io Python Client Library with **pip**:
 
-::
-    $ sudo pip install apilityio-lib
+.. code-block:: python
+
+   $ sudo pip install apilityio-lib
+
 
 API Documentation
 -----------------
-You can read the Python documentatio here: https://github.com/Apilityio/python-lib/releases
+You can read the Python documentation :ref:`apireference`.
+
+Quickstart
+----------
+How to start with the Python API quickly :ref:`quickstart`.
+
 
 Examples
 --------
-If you would like to obtain example code for any of the included client libraries, you can find it on our `downloads page <https://github.com/Apilityio/python-lib/releases>`_.
+If you would like to obtain code examples for any of the included client libraries, you can find it in the **examples** folder of the Github repository.
+
 
