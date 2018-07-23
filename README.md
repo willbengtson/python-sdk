@@ -34,16 +34,20 @@ Installation
 
 You can install the Apility.io Python Client Library with _pip_:
 
-::
-    $ sudo pip install apilityio-lib
+.. code-block:: python
+
+   $ sudo pip install apilityio-lib
+
 
 API Documentation
 -----------------
-You can read the Python documentatio here: https://github.com/Apilityio/python-lib/releases
+You can read the Python documentation here: https://github.com/Apilityio/python-lib/releases.
+
+You can also read the original REST API specification here: https://apility.io/apidocs
 
 Examples
 --------
-If you would like to obtain example code for any of the included client libraries, you can find it on our _`downloads page <https://github.com/Apilityio/python-lib/releases>`_.
+If you would like to obtain example code for any of the included client libraries, you can find it on our **examples** folder.
 
 Contact Us
 ----------
