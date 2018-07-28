@@ -14,7 +14,8 @@ def main(argv=None):
         try:
             api_key = None
             ip = None
-            options, remainder = getopt.getopt(argv[1:], 'h:a:i', ['help', 'api_key=', 'ip='])
+            options, remainder = getopt.getopt(
+                argv[1:], 'h:a:i', ['help', 'api_key=', 'ip='])
             for opt, arg in options:
                 if opt in ('-a', '--api_key'):
                     api_key = arg
@@ -42,16 +43,17 @@ def main(argv=None):
             response = client.CheckIP(ip)
 
             if response.status_code == 404:
-                print("Congratulations! The IP address has not been found in any blacklist.")
+                print(
+                    "Congratulations! The IP address has not been found in any blacklist.")
                 return 0
             if response.status_code != 200:
-                print("The API call returned this error HTTP %s: %s" % (response.status_code, response.error))
+                print("The API call returned this error HTTP %s: %s" %
+                      (response.status_code, response.error))
                 return 0
 
             blacklists = response.blacklists
             print("Ooops! The IP address has been found in one or more blacklist.")
             print('+- Blacklists: %s' % blacklists)
-
 
         except apilityio.errors.ApilityioValueError as ae:
             traceback.print_exc()
@@ -68,6 +70,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-

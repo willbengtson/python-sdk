@@ -50,7 +50,7 @@ class ClientTestCase(unittest.TestCase):
         time.sleep(10)
 
     def testCheckGoodBatchIPAddressesConnectionAnonymous(self):
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
         connection = client.Client()
         dto = connection.CheckBatchIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
@@ -72,9 +72,11 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client()
         try:
             dto = connection.CheckBatchIP(ip_sample)
-            self.assertEqual(1,0,'Wrong formated values should return an error.')
+            self.assertEqual(
+                1, 0, 'Wrong formated values should return an error.')
         except:
-            self.assertEqual(1,1,'Wrong formatted values interrupted execution.')
+            self.assertEqual(
+                1, 1, 'Wrong formatted values interrupted execution.')
         time.sleep(10)
 
     def testGeoIPAddressConnectionAnonymous(self):
@@ -97,14 +99,17 @@ class ClientTestCase(unittest.TestCase):
         time.sleep(10)
 
     def testGeoBatchIPAddressesConnectionAnonymous(self):
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
         connection = client.Client()
         dto = connection.GetGeoBatchIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.geolocated_ip_list[0].geoip.address, dto.geolocated_ip_list[0].ip_address)
-        self.assertEqual(dto.geolocated_ip_list[1].geoip.address, dto.geolocated_ip_list[1].ip_address)
-        self.assertEqual(dto.geolocated_ip_list[2].geoip.address, dto.geolocated_ip_list[2].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[0].geoip.address, dto.geolocated_ip_list[0].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[1].geoip.address, dto.geolocated_ip_list[1].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[2].geoip.address, dto.geolocated_ip_list[2].ip_address)
         time.sleep(10)
 
     def testCheckGoodDomainConnectionAnonymous(self):
@@ -125,7 +130,8 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertNotEqual(dto.response.score, 0)
-        self.assertEqual('betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
         self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
         self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
@@ -166,7 +172,8 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.response.score, 0)
-        self.assertEqual('pam.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'pam.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('aspmx.l.google.com' in dto.response.domain.mx, True)
         self.assertEqual(dto.response.disposable.is_disposable, False)
         self.assertEqual(dto.response.freemail.is_freemail, False)
@@ -182,7 +189,8 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertNotEqual(dto.response.score, 0)
-        self.assertEqual('betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
         self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
         self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
@@ -200,11 +208,16 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.email_scoring_list[0].email, 'devops@apility.io')
         self.assertEqual(dto.email_scoring_list[0].scoring.score, 0)
-        self.assertEqual(dto.email_scoring_list[0].scoring.disposable.is_disposable, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_role, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_well_formed, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.disposable.is_disposable, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_role, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_well_formed, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.smtp.exist_address, True)
         time.sleep(10)
 
     def tesCheckBadBatchEmailConnectionAnonymous(self):
@@ -213,13 +226,19 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.CheckBatchEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.email_scoring_list[0].email, 'test@mailinator.com')
+        self.assertEqual(
+            dto.email_scoring_list[0].email, 'test@mailinator.com')
         self.assertNotEqual(dto.email_scoring_list[0].scoring.score, 0)
-        self.assertEqual(dto.email_scoring_list[0].scoring.disposable.is_disposable, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_role, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_well_formed, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.disposable.is_disposable, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_role, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_well_formed, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.smtp.exist_address, True)
         time.sleep(10)
 
     def testASIPAddressConnectionAnonymous(self):
@@ -255,9 +274,11 @@ class ClientTestCase(unittest.TestCase):
             asnum_sample = -300
             connection = client.Client()
             dto = connection.GetASbyNum(asnum_sample)
-            self.assertEqual(1,0,'Wrong formated values should return an error.')
+            self.assertEqual(
+                1, 0, 'Wrong formated values should return an error.')
         except:
-            self.assertEqual(1,1,'Wrong formatted values interrupted execution.')
+            self.assertEqual(
+                1, 1, 'Wrong formatted values interrupted execution.')
         time.sleep(10)
 
     def testBadStringASNumConnectionAnonymous(self):
@@ -265,13 +286,15 @@ class ClientTestCase(unittest.TestCase):
             asnum_sample = "abcdce"
             connection = client.Client()
             dto = connection.GetASbyNum(asnum_sample)
-            self.assertEqual(1,0,'Wrong formated values should return an error.')
+            self.assertEqual(
+                1, 0, 'Wrong formated values should return an error.')
         except:
-            self.assertEqual(1,1,'Wrong formatted values interrupted execution.')
+            self.assertEqual(
+                1, 1, 'Wrong formatted values interrupted execution.')
         time.sleep(10)
 
     def testASBatchIPAddressesConnectionAnonymous(self):
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
         connection = client.Client()
         dto = connection.GetASBatchByIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
@@ -323,5 +346,5 @@ class ClientTestCase(unittest.TestCase):
         time.sleep(10)
 
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    unittest.main()

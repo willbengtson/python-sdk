@@ -14,7 +14,8 @@ def main(argv=None):
         try:
             api_key = None
             domain = None
-            options, remainder = getopt.getopt(argv[1:], 'h:a:d', ['help', 'api_key=', 'domain='])
+            options, remainder = getopt.getopt(
+                argv[1:], 'h:a:d', ['help', 'api_key=', 'domain='])
             for opt, arg in options:
                 if opt in ('-a', '--api_key'):
                     api_key = arg
@@ -42,7 +43,8 @@ def main(argv=None):
             response = client.CheckDomain(domain)
 
             if response.status_code != 200:
-                print("The API call returned this error HTTP %s: %s" % (response.status_code, response.error))
+                print("The API call returned this error HTTP %s: %s" %
+                      (response.status_code, response.error))
                 return 0
 
             dresponse = response.response
@@ -61,10 +63,9 @@ def main(argv=None):
             print('+')
             print('+--- Source IP score: %s' % dresponse.source_ip.score)
             print('+--- Source Blacklist: %s' % dresponse.source_ip.blacklist)
-            print('+--- Source Quarantined? %s' % dresponse.source_ip.is_quarantined)
+            print('+--- Source Quarantined? %s' %
+                  dresponse.source_ip.is_quarantined)
             print('+--- Source Address: %s' % dresponse.source_ip.address)
-
-
 
         except apilityio.errors.ApilityioValueError as ae:
             traceback.print_exc()
@@ -81,6 +82,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-

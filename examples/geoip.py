@@ -14,7 +14,8 @@ def main(argv=None):
         try:
             api_key = None
             ip = None
-            options, remainder = getopt.getopt(argv[1:], 'h:a:i', ['help', 'api_key=', 'ip='])
+            options, remainder = getopt.getopt(
+                argv[1:], 'h:a:i', ['help', 'api_key=', 'ip='])
             for opt, arg in options:
                 if opt in ('-a', '--api_key'):
                     api_key = arg
@@ -41,7 +42,8 @@ def main(argv=None):
 
             response = client.GetGeoIP(ip)
             if response.status_code != 200:
-                print("The API call returned this error HTTP %s: %s" % (response.status_code, response.error))
+                print("The API call returned this error HTTP %s: %s" %
+                      (response.status_code, response.error))
                 return 0
 
             geoip = response.geoip
@@ -69,7 +71,6 @@ def main(argv=None):
             print('+--- AS country: %s' % geoip.asystem.country)
             print('+--- AS networks: %s' % geoip.asystem.networks)
 
-
         except apilityio.errors.ApilityioValueError as ae:
             traceback.print_exc()
             print("ERROR: ", ae)
@@ -85,6 +86,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-

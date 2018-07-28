@@ -14,9 +14,11 @@
 
 import requests
 
+
 class BaseDict(dict):
     """Create a Generic object from  dict.
     """
+
     def __getattr__(self, name):
         if name in self:
             return self[name]
@@ -32,6 +34,7 @@ class BaseDict(dict):
         else:
             raise AttributeError("No such attribute: " + name)
 
+
 class Response(object):
     """Create a basic response object.
 
@@ -44,9 +47,10 @@ class Response(object):
       - ``error``: If status code is not 200 (OK), the error returned by the server.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None):
+    def __init__(self, status_code=requests.codes.ok, error=None):
         self.status_code = status_code
         self.error = error
+
 
 class BadIPResponse(Response):
     """Response object with the result of a query to check if the IP address has been found in any blacklist.
@@ -62,9 +66,11 @@ class BadIPResponse(Response):
       - ``blacklists``: List of strings with the name of the Blacklists of the IP.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, blacklists = []):
-        super(BadIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, blacklists=[]):
+        super(BadIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.blacklists = blacklists
+
 
 class IPBlacklist(object):
     """Object to pair IP adress and blacklists. This object contains an IP address and a list with the blacklists it was found.
@@ -97,8 +103,9 @@ class BadBatchIPResponse(Response):
       - ``ipblacklists_set``: Set of :func:`~apilityio.model.IPBlacklist` objects that contains the result of the check performed on each IP address.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, ipblacklists_set = set()):
-        super(BadBatchIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, ipblacklists_set=set()):
+        super(BadBatchIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.ipblacklists_set = ipblacklists_set
 
 
@@ -119,6 +126,7 @@ class ContinentNames(dict):
       - ``ru``: Russian
     """
 
+
 class CountryNames(BaseDict):
     """Object to cointain all the translations of a country. It is only guaranteed to exists the english (en) attribute.
 
@@ -135,6 +143,7 @@ class CountryNames(BaseDict):
       - ``es``: Spanish
       - ``ru``: Russian
     """
+
 
 class GeoIP(BaseDict):
     """Object to cointain all geolocation data of the IP address.
@@ -171,6 +180,7 @@ class GeoIP(BaseDict):
         self.continent_names = ContinentNames(geoip['continent_names'])
         self.asystem = ASystem(geoip['as'])
 
+
 class ASystem(BaseDict):
     """Object to cointain all the information of an Autonomous System.
 
@@ -183,6 +193,7 @@ class ASystem(BaseDict):
       - ``country``: ISO 3166-1 Country code
       - ``networks``: List with the networks of the AS
     """
+
 
 class GeoIPResponse(Response):
     """Response object with the result of a query to get the IP address geolocation data.
@@ -198,12 +209,14 @@ class GeoIPResponse(Response):
       - ``geoip``: Object :func:`~apilityio.model.GeoIP` containing all geolocation attributes.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, geoip = None):
-        super(GeoIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, geoip=None):
+        super(GeoIPResponse, self).__init__(
+            status_code=status_code, error=error)
         if geoip is not None and 'address' in geoip:
             self.geoip = GeoIP(geoip)
         else:
             self.geoip = None
+
 
 class IPGeodata(object):
     """Object to pair IP adress and geodata information. This object contains an IP address and its geodata information.
@@ -221,6 +234,7 @@ class IPGeodata(object):
         self.ip_address = ip_address
         self.geoip = geodata
 
+
 class GeoBatchIPResponse(Response):
     """Response object with the result of a query to get the geolocation data of multiple IP addresses.
 
@@ -235,10 +249,12 @@ class GeoBatchIPResponse(Response):
           - ``geolocated_ip_list``: List of :func:`~apilityio.model.IPGeodata` objects.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, geolocated_ip_list = []):
+    def __init__(self, status_code=requests.codes.ok, error=None, geolocated_ip_list=[]):
 
-        super(GeoBatchIPResponse, self).__init__(status_code = status_code, error = error)
+        super(GeoBatchIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.geolocated_ip_list = geolocated_ip_list
+
 
 class IP(BaseDict):
     """Object to cointain the information of the information of looking up the IP in the blacklists.
@@ -252,6 +268,7 @@ class IP(BaseDict):
       - ``is_quarantined``: If the IP has been added by the user to the quarantine lists.
       - ``address``: IPv4 or IPv6 resolved.
     """
+
 
 class Domain(BaseDict):
     """Object to cointain the information of testing different subdomains of the main root domain: NS records, MX records and domain blacklists.
@@ -267,6 +284,7 @@ class Domain(BaseDict):
       - ``mx``: List with the hosts found in the MX records.
       - ``ns``: List with the hosts found in the NS records.
     """
+
 
 class BadDomain(BaseDict):
     """Object to cointain all scoring and blacklist analysis for main Domain, MX and NS records and IP address.
@@ -287,6 +305,7 @@ class BadDomain(BaseDict):
         self.ip = IP(domain_data['ip'])
         self.source_ip = IP(domain_data['source_ip'])
 
+
 class BadDomainResponse(Response):
     """Response object with the result of a query to check if the Domain and its MX and NS records have been found in any blacklist.
 
@@ -301,12 +320,14 @@ class BadDomainResponse(Response):
       - ``response``: Object :func:`~apilityio.model.BadDomain` containing all scoring and blacklists of the Domain.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, domain_data = None):
-        super(BadDomainResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, domain_data=None):
+        super(BadDomainResponse, self).__init__(
+            status_code=status_code, error=error)
         if domain_data is not None:
             self.response = BadDomain(domain_data)
         else:
             self.response = None
+
 
 class DomainScored(object):
     """Object to pair domain and the result of the scoring process
@@ -324,6 +345,7 @@ class DomainScored(object):
         self.domain = domain
         self.scoring = scored_domain
 
+
 class BadBatchDomainResponse(Response):
     """Response object with the result of a query to get the analysis data of multiple domains.
 
@@ -338,9 +360,11 @@ class BadBatchDomainResponse(Response):
           - ``domain_scoring_list``: List of :func:`~apilityio.model.DomainScored` objects.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, domain_scoring_list = []):
-        super(BadBatchDomainResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, domain_scoring_list=[]):
+        super(BadBatchDomainResponse, self).__init__(
+            status_code=status_code, error=error)
         self.domain_scoring_list = domain_scoring_list
+
 
 class EmailAddress(BaseDict):
     """Object to cointain the information of the format of the Email address.
@@ -353,6 +377,7 @@ class EmailAddress(BaseDict):
       - ``is_role``: True if the email has the format of a role-based-address. It's not common to allow registration with role-based-addresses.
       - ``is_well_formed``:	True if the email is compliant with the standard email formats.
     """
+
 
 class SMTPInfo(BaseDict):
     """Object to cointain the information obtained after testing the remote inbox SMTP server where the email is hosted.
@@ -367,6 +392,7 @@ class SMTPInfo(BaseDict):
       - ``exist_catchall``:	True if the SMTP service implements a catch-all email feature.
     """
 
+
 class FreeEmail(BaseDict):
     """Object to cointain the information checking the domain against a list of Free domain servers.
 
@@ -377,6 +403,7 @@ class FreeEmail(BaseDict):
       - ``score``: Number describing the result of the algorithm. Negative means 'suspicious' or 'bad' IP. Neutral or positive means it's a 'clean' Email.
       - ``is_freemail``: True if the domain has been found in any Free Email Service Provider list.
     """
+
 
 class EmailScore(BaseDict):
     """Object to cointain the information checking the email against a list of Email addresses of abusers.
@@ -389,6 +416,7 @@ class EmailScore(BaseDict):
       - ``blacklist``: List containing the blacklists where the email was found.
     """
 
+
 class DisposableEmail(BaseDict):
     """Object to cointain the information checking the domain against a list of Disposable Email Addresses.
 
@@ -399,6 +427,7 @@ class DisposableEmail(BaseDict):
       - ``score``: Number describing the result of the algorithm. Negative means 'suspicious' or 'bad' IP. Neutral or positive means it's a 'clean' Email.
       - ``is_disposable``: True if The domain has been found in any Disposable Email Address Providers list.
     """
+
 
 class BadEmail(BaseDict):
     """Object to cointain all scoring and blacklist analysis for Email about SMTP server, main Domain, MX and NS records and IP address.
@@ -444,12 +473,14 @@ class BadEmailResponse(Response):
       - ``response``: Object :func:`~apilityio.model.BadEmail` containing all scoring and blacklists of the Email.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, email_data = None):
-        super(BadEmailResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, email_data=None):
+        super(BadEmailResponse, self).__init__(
+            status_code=status_code, error=error)
         if email_data is not None:
             self.response = BadEmail(email_data)
         else:
             self.response = None
+
 
 class EmailScored(object):
     """Object to pair Email and the result of the scoring process
@@ -467,6 +498,7 @@ class EmailScored(object):
         self.email = email
         self.scoring = scored_email
 
+
 class BadBatchEmailResponse(Response):
     """Response object with the result of a query to get the analysis data of multiple emails.
 
@@ -481,9 +513,11 @@ class BadBatchEmailResponse(Response):
           - ``email_scoring_list``: List of :func:`~apilityio.model.EmailScored` objects.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, email_scoring_list = []):
-        super(BadBatchEmailResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, email_scoring_list=[]):
+        super(BadBatchEmailResponse, self).__init__(
+            status_code=status_code, error=error)
         self.email_scoring_list = email_scoring_list
+
 
 class ASResponse(Response):
     """Response object with the result of a query to get Autonomous System information.
@@ -499,12 +533,13 @@ class ASResponse(Response):
       - ``asystem``: Object :func:`~apilityio.model.ASystem` containing all autonomous system attributes.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, asystem = None):
-        super(ASResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem=None):
+        super(ASResponse, self).__init__(status_code=status_code, error=error)
         if asystem is not None:
             self.asystem = ASystem(asystem)
         else:
             self.asystem = None
+
 
 class ASBatchIPResponse(Response):
     """Response object with the result of a query to get the Autonomous System information of multiple IP addresses.
@@ -520,9 +555,11 @@ class ASBatchIPResponse(Response):
           - ``asystem_ip_list``: List of :func:`~apilityio.model.IPASystem` objects.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, asystem_ip_list = []):
-        super(ASBatchIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem_ip_list=[]):
+        super(ASBatchIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.asystem_ip_list = asystem_ip_list
+
 
 class IPASystem(object):
     """Object to pair IP adress and Autonomous System information. This object contains an IP address and its AS information.
@@ -540,6 +577,7 @@ class IPASystem(object):
         self.ip_address = ip_address
         self.asystem = as_data
 
+
 class ASNASystem(object):
     """Object to pair AS numbers and Autonomous System information. This object contains an AS number and its AS information.
 
@@ -556,6 +594,7 @@ class ASNASystem(object):
         self.asn = as_number
         self.asystem = as_data
 
+
 class ASBatchNumResponse(Response):
     """Response object with the result of a query to get the Autonomous System information of multiple AS numbers.
 
@@ -570,9 +609,11 @@ class ASBatchNumResponse(Response):
           - ``asystem_asn_list``: List of :func:`~apilityio.model.ASNASystem` objects.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, asystem_num_list = []):
-        super(ASBatchNumResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem_num_list=[]):
+        super(ASBatchNumResponse, self).__init__(
+            status_code=status_code, error=error)
         self.asystem_asn_list = asystem_num_list
+
 
 class WhoisIPResponse(Response):
     """Response object with the result of a query to get WHOIS information of an IP address.
@@ -588,12 +629,14 @@ class WhoisIPResponse(Response):
       - ``whois``: Object :func:`~apilityio.model.WhoisIP` containing all WHOIS objects and attributes.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, whois = None):
-        super(WhoisIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, whois=None):
+        super(WhoisIPResponse, self).__init__(
+            status_code=status_code, error=error)
         if whois is not None:
             self.whois = WhoisIP(whois)
         else:
             self.whois = None
+
 
 class WhoisIP(BaseDict):
     """Object to cointain all WHOIS data of the IP address.
@@ -617,7 +660,9 @@ class WhoisIP(BaseDict):
     def __init__(self, whois):
         super(WhoisIP, self).__init__(whois)
         self.network = WhoisNetwork(whois['network'])
-        self.objects = [WhoisObject(value) for key, value in whois['objects'].items()]
+        self.objects = [WhoisObject(value)
+                        for key, value in whois['objects'].items()]
+
 
 class WhoisObject(BaseDict):
     """Object to cointain all WHOIS data (entity) in the objects list within the WHOIS.
@@ -651,11 +696,12 @@ class WhoisObject(BaseDict):
             self.notices = [WhoisNotice(notice) for notice in notices]
         else:
             self.notices = []
-        remarks =  whoisobject['remarks']
+        remarks = whoisobject['remarks']
         if remarks:
             self.remarks = [WhoisRemark(remark) for remark in remarks]
         else:
             self.remarks = []
+
 
 class WhoisNetwork(BaseDict):
     """Object to cointain all WHOIS data (entity) in the network within the WHOIS.
@@ -692,11 +738,13 @@ class WhoisNetwork(BaseDict):
             self.notices = [WhoisNotice(notice) for notice in notices]
         else:
             self.notices = []
-        remarks =  whoisnetwork['remarks']
+        remarks = whoisnetwork['remarks']
         if remarks:
             self.remarks = [WhoisRemark(remark) for remark in remarks]
         else:
             self.remarks = []
+
+
 class WhoisEvent(BaseDict):
     """Object to cointain all WHOIS data (entity) in the events within the WHOIS.
 
@@ -708,6 +756,7 @@ class WhoisEvent(BaseDict):
         - ``timestamp``: The date an event occured in ISO 8601 format.
         - ``actor``: The identifier for an event initiator (if any).
     """
+
 
 class WhoisNotice(BaseDict):
     """Object to cointain all WHOIS data (entity) in the notices within the WHOIS.
@@ -721,6 +770,7 @@ class WhoisNotice(BaseDict):
         - ``links``: list of HTTP/HTTPS links provided for a notice.
     """
 
+
 class WhoisRemark(BaseDict):
     """Object to cointain all WHOIS data (entity) in the remarks within the WHOIS.
 
@@ -732,6 +782,7 @@ class WhoisRemark(BaseDict):
         - ``description``: The description/body of a notice.
         - ``links``: list of HTTP/HTTPS links provided for a notice.
     """
+
 
 class WhoisObjectContact(BaseDict):
     """Object to cointain all WHOIS data (entity) in the object contact within the WHOIS.
@@ -749,6 +800,7 @@ class WhoisObjectContact(BaseDict):
         - ``title``: The contact's position or job title.
     """
 
+
 class HistoryIPResponse(Response):
     """Response object with the result of a query to get the historical information of an IP address.
 
@@ -763,12 +815,14 @@ class HistoryIPResponse(Response):
       - ``history``: List of Objects :func:`~apilityio.model.HistoryIP` containing all transaction historical data.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, history = None):
-        super(HistoryIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+        super(HistoryIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.history = []
         if history:
             for item in history:
                 self.history.append(HistoryIP(item))
+
 
 class HistoryIP(BaseDict):
     """Object to cointain the detals of a transaction of IP address in our database.
@@ -784,6 +838,7 @@ class HistoryIP(BaseDict):
         - ``blacklists``: List of blacklists after the execution of the command and the blacklist change.
     """
 
+
 class HistoryDomainResponse(Response):
     """Response object with the result of a query to get the historical information of a domain.
 
@@ -798,12 +853,14 @@ class HistoryDomainResponse(Response):
       - ``history``: List of Objects :func:`~apilityio.model.HistoryDomain` containing all transaction historical data.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, history = None):
-        super(HistoryDomainResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+        super(HistoryDomainResponse, self).__init__(
+            status_code=status_code, error=error)
         self.history = []
         if history:
             for item in history:
                 self.history.append(HistoryDomain(item))
+
 
 class HistoryDomain(BaseDict):
     """Object to cointain the detals of a transaction of domain in our database.
@@ -819,6 +876,7 @@ class HistoryDomain(BaseDict):
         - ``blacklists``: List of blacklists after the execution of the command and the blacklist change.
     """
 
+
 class HistoryEmailResponse(Response):
     """Response object with the result of a query to get the historical information of an email.
 
@@ -833,12 +891,14 @@ class HistoryEmailResponse(Response):
       - ``history``: List of Objects :func:`~apilityio.model.HistoryEmail` containing all transaction historical data.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, history = None):
-        super(HistoryEmailResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+        super(HistoryEmailResponse, self).__init__(
+            status_code=status_code, error=error)
         self.history = []
         if history:
             for item in history:
                 self.history.append(HistoryEmail(item))
+
 
 class HistoryEmail(BaseDict):
     """Object to cointain the detals of a transaction of email in our database.
@@ -854,6 +914,7 @@ class HistoryEmail(BaseDict):
         - ``blacklists``: List of blacklists after the execution of the command and the blacklist change.
     """
 
+
 class QuarantineIPResponse(Response):
     """Response object with the result of a query to get the IP addresses in the quarantine of the user.
 
@@ -868,12 +929,14 @@ class QuarantineIPResponse(Response):
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineIP` containing the pair IP address and TTL.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, quarantine = None):
-        super(QuarantineIPResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+        super(QuarantineIPResponse, self).__init__(
+            status_code=status_code, error=error)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
                 self.quarantine.append(QuarantineIP(item))
+
 
 class QuarantineIP(BaseDict):
     """Object to cointain the IP address and the Time to Live of the IP address in the quarantine list.
@@ -885,6 +948,7 @@ class QuarantineIP(BaseDict):
         - ``ip``: IP address to add to QUARANTINE-IP blacklist.
         - ``ttl``: Time to Live in seconds of the IP in the blacklist.
     """
+
 
 class QuarantineCountryResponse(Response):
     """Response object with the result of a query to get the countries in the quarantine of the user.
@@ -900,12 +964,14 @@ class QuarantineCountryResponse(Response):
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineCountry` containing the pair Country and TTL.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, quarantine = None):
-        super(QuarantineCountryResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+        super(QuarantineCountryResponse, self).__init__(
+            status_code=status_code, error=error)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
                 self.quarantine.append(QuarantineCountry(item))
+
 
 class QuarantineCountry(BaseDict):
     """Object to cointain the Country and the Time to Live of the country in the quarantine list.
@@ -917,6 +983,7 @@ class QuarantineCountry(BaseDict):
         - ``country``: Country to add to QUARANTINE-COUNTRY blacklist.
         - ``ttl``: Time to Live in seconds of the country in the blacklist.
     """
+
 
 class QuarantineContinentResponse(Response):
     """Response object with the result of a query to get the continents in the quarantine of the user.
@@ -932,12 +999,14 @@ class QuarantineContinentResponse(Response):
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineContinent` containing the pair Continent and TTL.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, quarantine = None):
-        super(QuarantineContinentResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+        super(QuarantineContinentResponse, self).__init__(
+            status_code=status_code, error=error)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
                 self.quarantine.append(QuarantineContinent(item))
+
 
 class QuarantineContinent(BaseDict):
     """Object to cointain the Continent and the Time to Live of the continent in the quarantine list.
@@ -949,6 +1018,7 @@ class QuarantineContinent(BaseDict):
         - ``continent``: Country to add to QUARANTINE-CONTINENT blacklist.
         - ``ttl``: Time to Live in seconds of the continent in the blacklist.
     """
+
 
 class QuarantineASResponse(Response):
     """Response object with the result of a query to get the Autonomous System in the quarantine of the user.
@@ -964,12 +1034,14 @@ class QuarantineASResponse(Response):
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineAS` containing the pair AS and TTL.
     """
 
-    def __init__(self, status_code = requests.codes.ok, error = None, quarantine = None):
-        super(QuarantineASResponse, self).__init__(status_code = status_code, error = error)
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+        super(QuarantineASResponse, self).__init__(
+            status_code=status_code, error=error)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
                 self.quarantine.append(QuarantineAS(item))
+
 
 class QuarantineAS(BaseDict):
     """Object to cointain the AS and the Time to Live of the continent in the quarantine list.
@@ -981,4 +1053,3 @@ class QuarantineAS(BaseDict):
         - ``asn``: Country to add to QUARANTINE-AS blacklist.
         - ``ttl``: Time to Live in seconds of the continent in the blacklist.
     """
-

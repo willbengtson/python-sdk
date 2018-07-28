@@ -16,8 +16,6 @@ limitations under the License.
 
 import logging
 import logging.config
-import os
-import ssl
 import sys
 
 try:
@@ -58,7 +56,6 @@ DEFAULT_LOGGING = {
 }
 
 logging.config.dictConfig(DEFAULT_LOGGING)
-_logger = logging.getLogger(__name__)
 
 _PY_VERSION_MAJOR = sys.version_info.major
 _PY_VERSION_MINOR = sys.version_info.minor
@@ -68,10 +65,11 @@ _DEPRECATED_VERSION_TEMPLATE = (
     'order to benefit from important security improvements and ensure '
     'compatibility with this library, upgrade to Python 2.7.9 or higher.')
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 _COMMON_LIB_SIG = 'apilityio/%s' % VERSION
 _LOGGING_KEY = 'logging'
-_PYTHON_VERSION = 'Python/%d.%d.%d' % (_PY_VERSION_MAJOR, _PY_VERSION_MINOR, _PY_VERSION_MICRO)
+_PYTHON_VERSION = 'Python/%d.%d.%d' % (_PY_VERSION_MAJOR,
+                                       _PY_VERSION_MINOR, _PY_VERSION_MICRO)
 
 DEFAULT_HOST = 'api.apility.net'
 HTTPS_PROTOCOL = 'https'

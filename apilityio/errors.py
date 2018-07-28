@@ -12,11 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+errors module
+-------------
+
+This module contains the class wrapping the exceptions used in the library.
+
+"""
+
+
 class ApilityioError(Exception):
-  """Parent class of all errors raised by this library."""
-  pass
+    """Parent class of all errors raised by this library."""
+    pass
 
 
 class ApilityioValueError(ApilityioError):
-  """Error indicating that the user input for a function was invalid."""
-  pass
+    """Error indicating that the user input for a function was invalid."""
+    pass

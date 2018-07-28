@@ -14,7 +14,8 @@ def main(argv=None):
         try:
             api_key = None
             email = None
-            options, remainder = getopt.getopt(argv[1:], 'h:a:e', ['help', 'api_key=', 'email='])
+            options, remainder = getopt.getopt(
+                argv[1:], 'h:a:e', ['help', 'api_key=', 'email='])
             for opt, arg in options:
                 if opt in ('-a', '--api_key'):
                     api_key = arg
@@ -42,7 +43,8 @@ def main(argv=None):
             response = client.CheckEmail(email)
 
             if response.status_code != 200:
-                print("The API call returned this error HTTP %s: %s" % (response.status_code, response.error))
+                print("The API call returned this error HTTP %s: %s" %
+                      (response.status_code, response.error))
                 return 0
 
             eresponse = response.response
@@ -64,25 +66,30 @@ def main(argv=None):
             print('+')
             print('+--- Source IP score: %s' % eresponse.source_ip.score)
             print('+--- Source Blacklist: %s' % eresponse.source_ip.blacklist)
-            print('+--- Source Quarantined? %s' % eresponse.source_ip.is_quarantined)
+            print('+--- Source Quarantined? %s' %
+                  eresponse.source_ip.is_quarantined)
             print('+--- Source Address: %s' % eresponse.source_ip.address)
             print('+')
             print('+--- Email Address score: %s' % eresponse.address.score)
-            print('+--- Email Address Is Role?: %s' % eresponse.address.is_role)
-            print('+--- Email Address Is Well Formed?: %s' % eresponse.address.is_well_formed)
+            print('+--- Email Address Is Role?: %s' %
+                  eresponse.address.is_role)
+            print('+--- Email Address Is Well Formed?: %s' %
+                  eresponse.address.is_well_formed)
             print('+')
             print('+--- SMTP Info score: %s' % eresponse.smtp.score)
             print('+--- SMTP Info exist MX?: %s' % eresponse.smtp.exist_mx)
-            print('+--- SMTP Info exist Address?: %s' % eresponse.smtp.exist_address)
-            print('+--- SMTP Info Catch All?: %s' % eresponse.smtp.exist_catchall)
+            print('+--- SMTP Info exist Address?: %s' %
+                  eresponse.smtp.exist_address)
+            print('+--- SMTP Info Catch All?: %s' %
+                  eresponse.smtp.exist_catchall)
             print('+')
             print('+--- Free mail score: %s' % eresponse.freemail.score)
             print('+--- Is Free Email?: %s' % eresponse.freemail.is_freemail)
             print('+')
-            print('+--- Disposable Address score: %s' % eresponse.disposable.score)
-            print('+--- Is Disposable Address?: %s' % eresponse.disposable.is_disposable)
-
-
+            print('+--- Disposable Address score: %s' %
+                  eresponse.disposable.score)
+            print('+--- Is Disposable Address?: %s' %
+                  eresponse.disposable.is_disposable)
 
         except apilityio.errors.ApilityioValueError as ae:
             traceback.print_exc()
@@ -99,6 +106,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-

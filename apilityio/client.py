@@ -38,6 +38,7 @@ import apilityio.errors as errors
 
 _logger = logging.getLogger(__name__)
 
+
 class Client(object):
     """Create the web service client to access the API. This class implements all the logic of the client to connect to the API services of Apility.io.
 
@@ -50,10 +51,11 @@ class Client(object):
       :func:`~apilityio.errors.ApilityioValueError`:: If the provided arguments cannot connect to the API Service.
     """
 
-    def __init__(self, api_key = None, protocol = common.HTTPS_PROTOCOL ,host = common.DEFAULT_HOST):
+    def __init__(self, api_key=None, protocol=common.HTTPS_PROTOCOL, host=common.DEFAULT_HOST):
         self._api_key = api_key
         if api_key is not None and not self._ValidateUUID(api_key):
-            raise errors.ApilityioValueError('Not a valid API KEY. Is this a UUID?')
+            raise errors.ApilityioValueError(
+                'Not a valid API KEY. Is this a UUID?')
 
         if protocol not in [common.HTTPS_PROTOCOL, common.HTTP_PROTOCOL]:
             raise errors.ApilityioValueError('Not a valid Protocol.')
@@ -62,7 +64,6 @@ class Client(object):
         self._host = host
 
     def _ValidateUUID(self, uuid_string):
-
         """
         Validate that a UUID string is in
         fact a valid uuid.
@@ -76,7 +77,7 @@ class Client(object):
         """
 
         try:
-            val = UUID(uuid_string, version=4)
+            UUID(uuid_string, version=4)
         except ValueError:
             # If it's a value error, then the string
             # is not a valid hex code for a UUID.
@@ -92,7 +93,7 @@ class Client(object):
         """
         try:
             ipaddress.ip_address(ip_address)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid IP address.')
 
     def _ValidateIPList(self, ip_addresses):
@@ -103,7 +104,7 @@ class Client(object):
         try:
             for ip_address in ip_addresses:
                 ipaddress.ip_address(ip_address)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid IP address')
 
     def _ValidateDomain(self, domain):
@@ -111,7 +112,7 @@ class Client(object):
         """
         try:
             return validators.domain(domain)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Domain.')
 
     def _ValidateDomainList(self, domains):
@@ -122,7 +123,7 @@ class Client(object):
         try:
             for domain in domains:
                 validators.domain(domain)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Domain.')
 
     def _ValidateEmail(self, email):
@@ -130,7 +131,7 @@ class Client(object):
         """
         try:
             return validators.email(email)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Email.')
 
     def _ValidateEmailList(self, emails):
@@ -141,7 +142,7 @@ class Client(object):
         try:
             for email in emails:
                 validators.email(email)
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Email.')
 
     def _ValidateASNum(self, asnum):
@@ -149,11 +150,13 @@ class Client(object):
         """
         try:
             asnumber = int(asnum)
-            if asnum<=0:
-                raise errors.ApilityioValueError('Not a valid ASNUM. Negative number.')
+            if asnumber <= 0:
+                raise errors.ApilityioValueError(
+                    'Not a valid ASNUM. Negative number.')
             return True
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid ASNUM. It is a string.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid ASNUM. It is a string.')
 
     def _ValidateASNumList(self, as_numbers):
         """Validate if all the elements are well formed AS number list
@@ -163,65 +166,77 @@ class Client(object):
         try:
             for as_number in as_numbers:
                 asnum = int(as_number)
-                if asnum<=0:
-                    raise errors.ApilityioValueError('Not a valid ASNUM. Negative number.')
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid ASNUM. It is a string.')
+                if asnum <= 0:
+                    raise errors.ApilityioValueError(
+                        'Not a valid ASNUM. Negative number.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid ASNUM. It is a string.')
 
     def _ValidateTimestampSeconds(self, timestamp):
         """Validate if this is well formated timestamp
         """
         try:
             timestamp = int(timestamp)
-            if timestamp<=0:
-                raise errors.ApilityioValueError('Not a valid Timestamp. Negative number.')
+            if timestamp <= 0:
+                raise errors.ApilityioValueError(
+                    'Not a valid Timestamp. Negative number.')
             return True
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid Timestamp. It is a string.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid Timestamp. It is a string.')
 
     def _ValidatePage(self, page):
         """Validate if page is in the correct range
         """
         try:
             page = int(page)
-            if page<1:
-                raise errors.ApilityioValueError('Not a valid Page number. Must be bigger than 0.')
+            if page < 1:
+                raise errors.ApilityioValueError(
+                    'Not a valid Page number. Must be bigger than 0.')
             return True
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid Page number. It is a string.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid Page number. It is a string.')
 
     def _ValidateItems(self, items):
         """Validate if items is in the correct range
         """
         try:
             items = int(items)
-            if items<5:
-                raise errors.ApilityioValueError('Not a valid Items number. Must be bigger than 4.')
+            if items < 5:
+                raise errors.ApilityioValueError(
+                    'Not a valid Items number. Must be bigger than 4.')
             return True
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid Items number. It is a string.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid Items number. It is a string.')
 
     def _ValidateTTL(self, ttl):
         """Validate if the TTL  is in the correct range
         """
         try:
             ttl = int(ttl)
-            if ttl<0:
-                raise errors.ApilityioValueError('Not a valid TTL number. Must be bigger than -1.')
+            if ttl < 0:
+                raise errors.ApilityioValueError(
+                    'Not a valid TTL number. Must be bigger than -1.')
             return True
-        except Exception as e:
-            raise errors.ApilityioValueError('Not a valid Items number. It is a string.')
+        except Exception:
+            raise errors.ApilityioValueError(
+                'Not a valid Items number. It is a string.')
 
     def _ValidateCountry(self, country):
         """Validate if the country is valid 3166-1
         """
         try:
             if len(country) != 2:
-                raise errors.ApilityioValueError('Must be a two chars ISO 3166-1 code.')
+                raise errors.ApilityioValueError(
+                    'Must be a two chars ISO 3166-1 code.')
             if country.upper() not in common.COUNTRY_LIST:
-                raise errors.ApilityioValueError('Cannot find the country. Check the two chars code.')
+                raise errors.ApilityioValueError(
+                    'Cannot find the country. Check the two chars code.')
             return True
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Country.')
 
     def _ValidateContinent(self, continent):
@@ -229,11 +244,13 @@ class Client(object):
         """
         try:
             if len(continent) != 2:
-                raise errors.ApilityioValueError('Must be a two chars continent code: EU, AS, NA, AF, AN, SA, OC')
+                raise errors.ApilityioValueError(
+                    'Must be a two chars continent code: EU, AS, NA, AF, AN, SA, OC')
             if continent.upper() not in common.CONTINENT_LIST:
-                raise errors.ApilityioValueError('Cannot find the continent. Check the two chars code.')
+                raise errors.ApilityioValueError(
+                    'Cannot find the continent. Check the two chars code.')
             return True
-        except Exception as e:
+        except Exception:
             raise errors.ApilityioValueError('Not a valid Continent.')
 
     def GetConnectionData(self):
@@ -262,12 +279,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'badip', ip_address)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('BadIp Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('BadIp Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.not_found:
@@ -296,26 +316,30 @@ class Client(object):
 
         self._ValidateIPList(ip_addresses)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'badip_batch', ','.join(ip_addresses))
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'badip_batch', ','.join(ip_addresses))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('BadIp Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('BadIp Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadBatchIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadBatchIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             ipblacklists = response.json()['response']
             ipblacklists_set = set()
             for ipblacklist_pair in ipblacklists:
-                ipblacklists_set.add(model.IPBlacklist(ipblacklist_pair['ip'], ipblacklist_pair['blacklists']))
+                ipblacklists_set.add(model.IPBlacklist(
+                    ipblacklist_pair['ip'], ipblacklist_pair['blacklists']))
             dto = model.BadBatchIPResponse(ipblacklists_set=ipblacklists_set)
             return dto
 
         return model.BadBatchIPResponse(status_code=response.status_code, error=response.text)
-
 
     def GetGeoIP(self, ip_address):
         """Get the IP address geo-location information.
@@ -333,12 +357,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'geoip', ip_address)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('GeoIp Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('GeoIp Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.GeoIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.GeoIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -363,22 +390,28 @@ class Client(object):
 
         self._ValidateIPList(ip_addresses)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'geoip_batch', ','.join(ip_addresses))
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'geoip_batch', ','.join(ip_addresses))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('GeoIP Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('GeoIP Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.GeoBatchIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.GeoBatchIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             geolocated_ip_addresses = response.json()['response']
             geolocated_ip_list = []
             for geolocated_ip in geolocated_ip_addresses:
-                geolocated_ip_list.append(model.IPGeodata(geolocated_ip['ip'], model.GeoIP(geolocated_ip['geoip'])))
-            dto = model.GeoBatchIPResponse(geolocated_ip_list=geolocated_ip_list)
+                geolocated_ip_list.append(model.IPGeodata(
+                    geolocated_ip['ip'], model.GeoIP(geolocated_ip['geoip'])))
+            dto = model.GeoBatchIPResponse(
+                geolocated_ip_list=geolocated_ip_list)
             return dto
 
         return model.GeoBatchIPResponse(status_code=response.status_code, error=response.text)
@@ -400,12 +433,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'baddomain', domain)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('Baddomain Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('Baddomain Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadDomainResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadDomainResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -430,21 +466,26 @@ class Client(object):
 
         self._ValidateDomainList(domains)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'baddomain_batch', ','.join(domains))
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'baddomain_batch', ','.join(domains))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('BadDomain Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('BadDomain Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadBatchDomainResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadBatchDomainResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             domains = response.json()['response']
             domain_list = []
             for domain in domains:
-                domain_list.append(model.DomainScored(domain['domain'], model.BadDomain(domain['scoring'])))
+                domain_list.append(model.DomainScored(
+                    domain['domain'], model.BadDomain(domain['scoring'])))
             dto = model.BadBatchDomainResponse(domain_scoring_list=domain_list)
             return dto
 
@@ -466,12 +507,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'bademail', email)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('Bademail Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('Bademail Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadEmailResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadEmailResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -496,21 +540,26 @@ class Client(object):
 
         self._ValidateEmailList(emails)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'bademail_batch', ','.join(emails))
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'bademail_batch', ','.join(emails))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('BadEmails Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('BadEmails Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.BadBatchEmailResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.BadBatchEmailResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             emails = response.json()['response']
             email_list = []
             for email in emails:
-                email_list.append(model.EmailScored(email['email'], model.BadEmail(email['scoring'])))
+                email_list.append(model.EmailScored(
+                    email['email'], model.BadEmail(email['scoring'])))
             dto = model.BadBatchEmailResponse(email_scoring_list=email_list)
             return dto
 
@@ -532,12 +581,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'as/ip', ip_address)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('AsIP Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('AsIP Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.ASResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.ASResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -563,12 +615,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'as/num', int(asnum))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('AsNum Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('AsNum Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.ASResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.ASResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -593,21 +648,26 @@ class Client(object):
 
         self._ValidateIPList(ip_addresses)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'as_batch/ip', ','.join(ip_addresses))
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'as_batch/ip', ','.join(ip_addresses))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('ASbyIP Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('ASbyIP Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.ASBatchIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.ASBatchIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             asystem_ip_addresses = response.json()['response']
             asystem_ip_list = []
             for asystem_ip in asystem_ip_addresses:
-                asystem_ip_list.append(model.IPASystem(asystem_ip['ip'], model.ASystem(asystem_ip['as'])))
+                asystem_ip_list.append(model.IPASystem(
+                    asystem_ip['ip'], model.ASystem(asystem_ip['as'])))
             dto = model.ASBatchIPResponse(asystem_ip_list=asystem_ip_list)
             return dto
 
@@ -628,21 +688,26 @@ class Client(object):
 
         self._ValidateASNumList(as_numbers)
 
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'as_batch/num', ','.join([str(x) for x in as_numbers]))
+        endpoint = '%s/%s/%s' % (self._GetURL(), 'as_batch/num',
+                                 ','.join([str(x) for x in as_numbers]))
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('ASbyNum Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('ASbyNum Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.ASBatchNumResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.ASBatchNumResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
             asystem_numbers = response.json()['response']
             asystem_num_list = []
             for asystem_num in asystem_numbers:
-                asystem_num_list.append(model.ASNASystem(asystem_num['asn'], model.ASystem(asystem_num['as'])))
+                asystem_num_list.append(model.ASNASystem(
+                    asystem_num['asn'], model.ASystem(asystem_num['as'])))
             dto = model.ASBatchNumResponse(asystem_num_list=asystem_num_list)
             return dto
 
@@ -665,12 +730,15 @@ class Client(object):
 
         endpoint = '%s/%s/%s' % (self._GetURL(), 'whois/ip', ip_address)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('WHOISIP Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('WHOISIP Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.bad_request:
-            dto = model.WhoisIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.WhoisIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -679,7 +747,6 @@ class Client(object):
             return dto
 
         return model.WhoisIPResponse(status_code=response.status_code, error=response.text)
-
 
     def GetHistoryIP(self, ip_address, timestamp=None, items=5, page=1):
         """Get the list of transactions of a given IP address in our database. For experts who wish to know the historical activity of the given IP address in our database.
@@ -705,14 +772,18 @@ class Client(object):
         self._ValidatePage(page)
         self._ValidateItems(items)
 
-        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (self._GetURL(), 'metadata/changes/ip', ip_address, timestamp, page, items)
+        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (
+            self._GetURL(), 'metadata/changes/ip', ip_address, timestamp, page, items)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('HISTORYIP Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('HISTORYIP Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.HistoryIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.HistoryIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -746,14 +817,18 @@ class Client(object):
         self._ValidatePage(page)
         self._ValidateItems(items)
 
-        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (self._GetURL(), 'metadata/changes/domain', domain, timestamp, page, items)
+        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (
+            self._GetURL(), 'metadata/changes/domain', domain, timestamp, page, items)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('HISTORYDOMAIN Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('HISTORYDOMAIN Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.HistoryDomainResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.HistoryDomainResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -787,14 +862,18 @@ class Client(object):
         self._ValidatePage(page)
         self._ValidateItems(items)
 
-        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (self._GetURL(), 'metadata/changes/email', email, timestamp, page, items)
+        endpoint = '%s/%s/%s?timestamp=%s&page=%s&items=%s' % (
+            self._GetURL(), 'metadata/changes/email', email, timestamp, page, items)
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('HISTORYEMAIL Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('HISTORYEMAIL Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.HistoryEmailResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.HistoryEmailResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -814,12 +893,15 @@ class Client(object):
 
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/ip')
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('QUARANTINEIP GET Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('QUARANTINEIP GET Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.QuarantineIPResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.QuarantineIPResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -839,12 +921,15 @@ class Client(object):
 
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/country')
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('QUARANTINECOUNTRY GET Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('QUARANTINECOUNTRY GET Endpoint: %s. Response: %s:%s' % (
+            endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.QuarantineCountryResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.QuarantineCountryResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -864,12 +949,15 @@ class Client(object):
 
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/continent')
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('QUARANTINECONTINENT GET Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('QUARANTINECONTINENT GET Endpoint: %s. Response: %s:%s' % (
+            endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.QuarantineContinentResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.QuarantineContinentResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -889,12 +977,15 @@ class Client(object):
 
         endpoint = '%s/%s' % (self._GetURL(), 'quarantine/as')
 
-        response = requests.request("GET", endpoint, headers= {'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
+        response = requests.request("GET", endpoint, headers={
+                                    'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
 
-        _logger.debug('QUARANTINEAS GET Endpoint: %s. Response: %s:%s' % (endpoint, response.status_code, response.text))
+        _logger.debug('QUARANTINEAS GET Endpoint: %s. Response: %s:%s' %
+                      (endpoint, response.status_code, response.text))
 
         if response.status_code == requests.codes.unauthorized:
-            dto = model.QuarantineASResponse(status_code=response.status_code, error='Bad Request.')
+            dto = model.QuarantineASResponse(
+                status_code=response.status_code, error='Bad Request.')
             return dto
 
         if response.status_code == requests.codes.ok:
@@ -913,9 +1004,10 @@ class Client(object):
         response = requests.request("POST", endpoint, json=payload,
                                     headers={'X-Auth-Token': self._api_key, 'Accept': 'application/json'})
         _logger.debug('QUARANTINE%s POST Endpoint: %s. Response: %s:%s' % (
-        object_type.upper(), endpoint, response.status_code, response.text))
+            object_type.upper(), endpoint, response.status_code, response.text))
         if response.status_code == requests.codes.unauthorized:
-            dto = model.Response(status_code=response.status_code, error='Bad Request.')
+            dto = model.Response(
+                status_code=response.status_code, error='Bad Request.')
             return dto
         if response.status_code == requests.codes.ok:
             dto = model.Response(status_code=response.status_code, error='OK.')
@@ -1003,12 +1095,15 @@ class Client(object):
         return self._AddQuarantineObject(object_type, asnum, ttl, object_uri_type='as')
 
     def _DeleteQuarantineObject(self, object_type, object_value):
-        endpoint = '%s/%s/%s' % (self._GetURL(), 'quarantine/%s' % object_type, object_value)
-        response = requests.request("DELETE", endpoint, headers={'X-Auth-Token': self._api_key})
+        endpoint = '%s/%s/%s' % (self._GetURL(),
+                                 'quarantine/%s' % object_type, object_value)
+        response = requests.request("DELETE", endpoint, headers={
+                                    'X-Auth-Token': self._api_key})
         _logger.debug('QUARANTINE%s DELETE Endpoint: %s. Response: %s:%s' % (
-        object_type.upper(), endpoint, response.status_code, response.text))
+            object_type.upper(), endpoint, response.status_code, response.text))
         if response.status_code == requests.codes.unauthorized:
-            dto = model.Response(status_code=response.status_code, error='Bad Request.')
+            dto = model.Response(
+                status_code=response.status_code, error='Bad Request.')
             return dto
         if response.status_code == requests.codes.ok:
             dto = model.Response(status_code=response.status_code, error='OK.')
@@ -1027,7 +1122,6 @@ class Client(object):
         Raises:
           - :func:`~apilityio.errors.ApilityioValueError`: If the provided argument is not a valid IP address.
         """
-
 
         self._ValidateIP(ip_address)
         object_type = 'ip'
