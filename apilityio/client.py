@@ -295,8 +295,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            blacklists = response.json()['response']
-            dto = model.BadIPResponse(blacklists=blacklists)
+            json_dump = response.json()
+            blacklists = json_dump['response']
+            dto = model.BadIPResponse(blacklists=blacklists, json=json_dump)
             return dto
 
         return model.BadIPResponse(status_code=response.status_code, error=response.text)
@@ -331,12 +332,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            ipblacklists = response.json()['response']
+            json_dump = response.json()
+            ipblacklists = json_dump['response']
             ipblacklists_set = set()
             for ipblacklist_pair in ipblacklists:
                 ipblacklists_set.add(model.IPBlacklist(
                     ipblacklist_pair['ip'], ipblacklist_pair['blacklists']))
-            dto = model.BadBatchIPResponse(ipblacklists_set=ipblacklists_set)
+            dto = model.BadBatchIPResponse(
+                ipblacklists_set=ipblacklists_set, json=json_dump)
             return dto
 
         return model.BadBatchIPResponse(status_code=response.status_code, error=response.text)
@@ -369,8 +372,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            geoip = response.json()['ip']
-            dto = model.GeoIPResponse(geoip=geoip)
+            json_dump = response.json()
+            geoip = json_dump['ip']
+            dto = model.GeoIPResponse(geoip=geoip, json=json_dump)
             return dto
 
         return model.GeoIPResponse(status_code=response.status_code, error=response.text)
@@ -405,13 +409,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            geolocated_ip_addresses = response.json()['response']
+            json_dump = response.json()
+            geolocated_ip_addresses = json_dump['response']
             geolocated_ip_list = []
             for geolocated_ip in geolocated_ip_addresses:
                 geolocated_ip_list.append(model.IPGeodata(
                     geolocated_ip['ip'], model.GeoIP(geolocated_ip['geoip'])))
             dto = model.GeoBatchIPResponse(
-                geolocated_ip_list=geolocated_ip_list)
+                geolocated_ip_list=geolocated_ip_list, json=json_dump)
             return dto
 
         return model.GeoBatchIPResponse(status_code=response.status_code, error=response.text)
@@ -445,8 +450,10 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            baddomain_response = response.json()['response']
-            dto = model.BadDomainResponse(domain_data=baddomain_response)
+            json_dump = response.json()
+            baddomain_response = json_dump['response']
+            dto = model.BadDomainResponse(
+                domain_data=baddomain_response, json=json_dump)
             return dto
 
         return model.BadDomainResponse(status_code=response.status_code, error=response.text)
@@ -481,12 +488,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            domains = response.json()['response']
+            json_dump = response.json()
+            domains = json_dump['response']
             domain_list = []
             for domain in domains:
                 domain_list.append(model.DomainScored(
                     domain['domain'], model.BadDomain(domain['scoring'])))
-            dto = model.BadBatchDomainResponse(domain_scoring_list=domain_list)
+            dto = model.BadBatchDomainResponse(
+                domain_scoring_list=domain_list, json=json_dump)
             return dto
 
         return model.BadBatchDomainResponse(status_code=response.status_code, error=response.text)
@@ -519,8 +528,10 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            bademail_response = response.json()['response']
-            dto = model.BadEmailResponse(email_data=bademail_response)
+            json_dump = response.json()
+            bademail_response = json_dump['response']
+            dto = model.BadEmailResponse(
+                email_data=bademail_response, json=json_dump)
             return dto
 
         return model.BadEmailResponse(status_code=response.status_code, error=response.text)
@@ -555,12 +566,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            emails = response.json()['response']
+            json_dump = response.json()
+            emails = json_dump['response']
             email_list = []
             for email in emails:
                 email_list.append(model.EmailScored(
                     email['email'], model.BadEmail(email['scoring'])))
-            dto = model.BadBatchEmailResponse(email_scoring_list=email_list)
+            dto = model.BadBatchEmailResponse(
+                email_scoring_list=email_list, json=json_dump)
             return dto
 
         return model.BadBatchEmailResponse(status_code=response.status_code, error=response.text)
@@ -593,8 +606,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            asystem = response.json()['as']
-            dto = model.ASResponse(asystem=asystem)
+            json_dump = response.json()
+            asystem = json_dump['as']
+            dto = model.ASResponse(asystem=asystem, json=json_dump)
             return dto
 
         return model.ASResponse(status_code=response.status_code, error=response.text)
@@ -627,8 +641,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            asystem = response.json()['as']
-            dto = model.ASResponse(asystem=asystem)
+            json_dump = response.json()
+            asystem = json_dump['as']
+            dto = model.ASResponse(asystem=asystem, json=json_dump)
             return dto
 
         return model.ASResponse(status_code=response.status_code, error=response.text)
@@ -663,12 +678,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            asystem_ip_addresses = response.json()['response']
+            json_dump = response.json()
+            asystem_ip_addresses = json_dump['response']
             asystem_ip_list = []
             for asystem_ip in asystem_ip_addresses:
                 asystem_ip_list.append(model.IPASystem(
                     asystem_ip['ip'], model.ASystem(asystem_ip['as'])))
-            dto = model.ASBatchIPResponse(asystem_ip_list=asystem_ip_list)
+            dto = model.ASBatchIPResponse(
+                asystem_ip_list=asystem_ip_list, json=json_dump)
             return dto
 
         return model.ASBatchIPResponse(status_code=response.status_code, error=response.text)
@@ -703,12 +720,14 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            asystem_numbers = response.json()['response']
+            json_dump = response.json()
+            asystem_numbers = json_dump['response']
             asystem_num_list = []
             for asystem_num in asystem_numbers:
                 asystem_num_list.append(model.ASNASystem(
                     asystem_num['asn'], model.ASystem(asystem_num['as'])))
-            dto = model.ASBatchNumResponse(asystem_num_list=asystem_num_list)
+            dto = model.ASBatchNumResponse(
+                asystem_num_list=asystem_num_list, json=json_dump)
             return dto
 
         return model.ASBatchNumResponse(status_code=response.status_code, error=response.text)
@@ -742,8 +761,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            whois = response.json()['whois']
-            dto = model.WhoisIPResponse(whois=whois)
+            json_dump = response.json()
+            whois = json_dump['whois']
+            dto = model.WhoisIPResponse(whois=whois, json=json_dump)
             return dto
 
         return model.WhoisIPResponse(status_code=response.status_code, error=response.text)
@@ -787,8 +807,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            history = response.json()['changes_ip']
-            dto = model.HistoryIPResponse(history=history)
+            json_dump = response.json()
+            history = json_dump['changes_ip']
+            dto = model.HistoryIPResponse(history=history, json=json_dump)
             return dto
 
         return model.HistoryIPResponse(status_code=response.status_code, error=response.text)
@@ -832,8 +853,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            history = response.json()['changes_domain']
-            dto = model.HistoryDomainResponse(history=history)
+            json_dump = response.json()
+            history = json_dump['changes_domain']
+            dto = model.HistoryDomainResponse(history=history, json=json_dump)
             return dto
 
         return model.HistoryDomainResponse(status_code=response.status_code, error=response.text)
@@ -877,8 +899,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            history = response.json()['changes_email']
-            dto = model.HistoryEmailResponse(history=history)
+            json_dump = response.json()
+            history = json_dump['changes_email']
+            dto = model.HistoryEmailResponse(history=history, json=json_dump)
             return dto
 
         return model.HistoryEmailResponse(status_code=response.status_code, error=response.text)
@@ -905,8 +928,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            quarantine = response.json()['quarantined']
-            dto = model.QuarantineIPResponse(quarantine=quarantine)
+            json_dump = response.json()
+            quarantine = json_dump['quarantined']
+            dto = model.QuarantineIPResponse(quarantine=quarantine, json=json_dump)
             return dto
 
         return model.QuarantineIPResponse(status_code=response.status_code, error=response.text)
@@ -933,8 +957,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            quarantine = response.json()['quarantined']
-            dto = model.QuarantineCountryResponse(quarantine=quarantine)
+            json_dump = response.json()
+            quarantine = json_dump['quarantined']
+            dto = model.QuarantineCountryResponse(quarantine=quarantine, json=json_dump)
             return dto
 
         return model.QuarantineCountryResponse(status_code=response.status_code, error=response.text)
@@ -961,8 +986,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            quarantine = response.json()['quarantined']
-            dto = model.QuarantineContinentResponse(quarantine=quarantine)
+            json_dump = response.json()
+            quarantine = json_dump['quarantined']
+            dto = model.QuarantineContinentResponse(quarantine=quarantine, json=json_dump)
             return dto
 
         return model.QuarantineContinentResponse(status_code=response.status_code, error=response.text)
@@ -989,8 +1015,9 @@ class Client(object):
             return dto
 
         if response.status_code == requests.codes.ok:
-            quarantine = response.json()['quarantined']
-            dto = model.QuarantineASResponse(quarantine=quarantine)
+            json_dump = response.json()
+            quarantine = json_dump['quarantined']
+            dto = model.QuarantineASResponse(quarantine=quarantine, json=json_dump)
             return dto
 
         return model.QuarantineASResponse(status_code=response.status_code, error=response.text)

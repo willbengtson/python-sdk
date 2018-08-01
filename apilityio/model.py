@@ -41,15 +41,18 @@ class Response(object):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code
       - ``error``: If status code is not 200 (OK), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code
       - ``error``: If status code is not 200 (OK), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, json=None):
         self.status_code = status_code
         self.error = error
+        self.json = json
 
 
 class BadIPResponse(Response):
@@ -58,17 +61,19 @@ class BadIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``blacklists``: List of strings with the name of the Blacklists of the IP.
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``blacklists``: List of strings with the name of the Blacklists of the IP.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, blacklists=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, blacklists=[], json=None):
         super(BadIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.blacklists = blacklists
 
 
@@ -95,17 +100,19 @@ class BadBatchIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``ipblacklists_set``: Set of :func:`~apilityio.model.IPBlacklist` objects that contains the result of the check performed on each IP address.
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``ipblacklists_set``: Set of :func:`~apilityio.model.IPBlacklist` objects that contains the result of the check performed on each IP address.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, ipblacklists_set=set()):
+    def __init__(self, status_code=requests.codes.ok, error=None, ipblacklists_set=set(), json=None):
         super(BadBatchIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.ipblacklists_set = ipblacklists_set
 
 
@@ -201,17 +208,19 @@ class GeoIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``geoip``: Dictionary containing all the geo location data as described in https://apility.io/apidocs/#geoip
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``geoip``: Object :func:`~apilityio.model.GeoIP` containing all geolocation attributes.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, geoip=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, geoip=None, json=None):
         super(GeoIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         if geoip is not None and 'address' in geoip:
             self.geoip = GeoIP(geoip)
         else:
@@ -241,18 +250,20 @@ class GeoBatchIPResponse(Response):
         Keyword Arguments:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``geolocated_ip_list``: List of :func:`~apilityio.model.IPGeodata` objects.
 
         Attributes:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``geolocated_ip_list``: List of :func:`~apilityio.model.IPGeodata` objects.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, geolocated_ip_list=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, geolocated_ip_list=[], json=None):
 
         super(GeoBatchIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.geolocated_ip_list = geolocated_ip_list
 
 
@@ -312,17 +323,19 @@ class BadDomainResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``domain_data``: Dictionary containing all the domain analysis data as described in https://apility.io/apidocs/#domain
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``response``: Object :func:`~apilityio.model.BadDomain` containing all scoring and blacklists of the Domain.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, domain_data=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, domain_data=None, json=None):
         super(BadDomainResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         if domain_data is not None:
             self.response = BadDomain(domain_data)
         else:
@@ -352,17 +365,19 @@ class BadBatchDomainResponse(Response):
         Keyword Arguments:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``domain_scoring_list``: List of :func:`~apilityio.model.DomainScored` objects.
 
         Attributes:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``domain_scoring_list``: List of :func:`~apilityio.model.DomainScored` objects.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, domain_scoring_list=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, domain_scoring_list=[], json=None):
         super(BadBatchDomainResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.domain_scoring_list = domain_scoring_list
 
 
@@ -465,17 +480,19 @@ class BadEmailResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``email_data``: Dictionary containing all the email analysis data as described in https://apility.io/apidocs/#email
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or 404 (NOT_FOUND), the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``response``: Object :func:`~apilityio.model.BadEmail` containing all scoring and blacklists of the Email.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, email_data=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, email_data=None, json=None):
         super(BadEmailResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         if email_data is not None:
             self.response = BadEmail(email_data)
         else:
@@ -505,17 +522,19 @@ class BadBatchEmailResponse(Response):
         Keyword Arguments:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``email_scoring_list``: List of :func:`~apilityio.model.EmailScored` objects.
 
         Attributes:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``email_scoring_list``: List of :func:`~apilityio.model.EmailScored` objects.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, email_scoring_list=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, email_scoring_list=[], json=None):
         super(BadBatchEmailResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.email_scoring_list = email_scoring_list
 
 
@@ -533,8 +552,9 @@ class ASResponse(Response):
       - ``asystem``: Object :func:`~apilityio.model.ASystem` containing all autonomous system attributes.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, asystem=None):
-        super(ASResponse, self).__init__(status_code=status_code, error=error)
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem=None, json=None):
+        super(ASResponse, self).__init__(
+            status_code=status_code, error=error, json=json)
         if asystem is not None:
             self.asystem = ASystem(asystem)
         else:
@@ -547,17 +567,19 @@ class ASBatchIPResponse(Response):
         Keyword Arguments:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``asystem_ip_list``: List of :func:`~apilityio.model.IPASystem` objects.
 
         Attributes:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``asystem_ip_list``: List of :func:`~apilityio.model.IPASystem` objects.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, asystem_ip_list=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem_ip_list=[], json=None):
         super(ASBatchIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.asystem_ip_list = asystem_ip_list
 
 
@@ -601,17 +623,19 @@ class ASBatchNumResponse(Response):
         Keyword Arguments:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``asystem_asn_list``: List of :func:`~apilityio.model.ASNASystem` objects.
 
         Attributes:
           - ``status_code``: An integer with the HTTP response status code
           - ``error``: If status code is not 200 (OK), the error returned by the server.
+          - ``json``: JSON object returned by the REST API without modifications.
           - ``asystem_asn_list``: List of :func:`~apilityio.model.ASNASystem` objects.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, asystem_num_list=[]):
+    def __init__(self, status_code=requests.codes.ok, error=None, asystem_num_list=[], json=None):
         super(ASBatchNumResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.asystem_asn_list = asystem_num_list
 
 
@@ -621,17 +645,19 @@ class WhoisIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``whois``: Dict structure with the WHOIS IP information described in https://apility.io/apidocs/#whois
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``whois``: Object :func:`~apilityio.model.WhoisIP` containing all WHOIS objects and attributes.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, whois=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, whois=None, json=None):
         super(WhoisIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         if whois is not None:
             self.whois = WhoisIP(whois)
         else:
@@ -807,17 +833,19 @@ class HistoryIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: Dict structure with the list of ip transactions described in https://apility.io/apidocs/#transaction-ip
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: List of Objects :func:`~apilityio.model.HistoryIP` containing all transaction historical data.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None, json=None):
         super(HistoryIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.history = []
         if history:
             for item in history:
@@ -845,17 +873,19 @@ class HistoryDomainResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: Dict structure with the list of domains transactions described in https://apility.io/apidocs/#transaction-domain
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: List of Objects :func:`~apilityio.model.HistoryDomain` containing all transaction historical data.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None, json=None):
         super(HistoryDomainResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.history = []
         if history:
             for item in history:
@@ -883,17 +913,19 @@ class HistoryEmailResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: Dict structure with the list of email transactions described in https://apility.io/apidocs/#transaction-email
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``history``: List of Objects :func:`~apilityio.model.HistoryEmail` containing all transaction historical data.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, history=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, history=None, json=None):
         super(HistoryEmailResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.history = []
         if history:
             for item in history:
@@ -921,17 +953,19 @@ class QuarantineIPResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: Dict structure with the list of pairs of IP addresses and TTL to stay in the quarantine
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineIP` containing the pair IP address and TTL.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None, json=None):
         super(QuarantineIPResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
@@ -956,17 +990,19 @@ class QuarantineCountryResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: Dict structure with the list of pairs of countries and TTL to stay in the quarantine
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineCountry` containing the pair Country and TTL.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None, json=None):
         super(QuarantineCountryResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
@@ -991,17 +1027,19 @@ class QuarantineContinentResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: Dict structure with the list of pairs of continents and TTL to stay in the quarantine
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineContinent` containing the pair Continent and TTL.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None, json=None):
         super(QuarantineContinentResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.quarantine = []
         if quarantine:
             for item in quarantine:
@@ -1026,17 +1064,19 @@ class QuarantineASResponse(Response):
     Keyword Arguments:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: Dict structure with the list of pairs of AS and TTL to stay in the quarantine
 
     Attributes:
       - ``status_code``: An integer with the HTTP response status code. See https://apility.io/apidocs/#errors
       - ``error``: If status code is not 200 (OK) or the error returned by the server.
+      - ``json``: JSON object returned by the REST API without modifications.
       - ``quarantine``: List of Objects :func:`~apilityio.model.QuarantineAS` containing the pair AS and TTL.
     """
 
-    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None):
+    def __init__(self, status_code=requests.codes.ok, error=None, quarantine=None, json=None):
         super(QuarantineASResponse, self).__init__(
-            status_code=status_code, error=error)
+            status_code=status_code, error=error, json=json)
         self.quarantine = []
         if quarantine:
             for item in quarantine:

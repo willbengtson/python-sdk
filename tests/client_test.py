@@ -34,14 +34,6 @@ TEST_KEY_SAMPLE = os.environ['APILITYIO_API_KEY']
 
 class ClientTestCase(unittest.TestCase):
 
-    def setUp(self):
-        # This is a test
-        x = 1
-
-    def tearDown(self):
-        #This is anothertest
-        x = 2
-
     def testConnectionWithoutParameters(self):
         connection = client.Client()
         api_key_test, protocol_test, host_test = connection.GetConnectionData()
@@ -81,7 +73,7 @@ class ClientTestCase(unittest.TestCase):
 
     def testConnectionWithCustomHostParameters(self):
         host_sample = 'google.com'
-        connection = client.Client(host = host_sample)
+        connection = client.Client(host=host_sample)
         api_key_test, protocol_test, host_test = connection.GetConnectionData()
         self.assertEqual(api_key_test, None)
         self.assertEqual(protocol_test, common.HTTPS_PROTOCOL)
@@ -96,12 +88,31 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.error, None)
         self.assertNotEqual(dto.blacklists, [])
 
+    def testCheckBadIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = '1.2.3.4'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertIn('QUARANTINE-IP', dto.json['response'])
+
     def testCheckBadIPAddressConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         ip_sample = '1.2.3.4'
         connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
+
+    def testCheckBadBatchIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = ['1.2.3.4', '114.223.63.139', '114.224.29.97']
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckBatchIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertNotEqual(dto.ipblacklists_set, None)
+        self.assertEqual(3, len(dto.json['response']))
 
     def testCheckBadBatchIPAddressConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
@@ -122,42 +133,71 @@ class ClientTestCase(unittest.TestCase):
     def testGeoIPAddressConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         ip_sample = '8.8.8.8'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.GetGeoIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.geoip.address, '8.8.8.8')
         self.assertEqual(dto.geoip.asystem.asn, '15169')
 
+    def testGeoIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = '8.8.8.8'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetGeoIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.geoip.address, '8.8.8.8')
+        self.assertEqual(dto.geoip.asystem.asn, '15169')
+        self.assertEqual('US', dto.json['ip']['country'])
+
     def testGeoIPAddressConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         ip_sample = '8.8.8.8'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.GetGeoIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def testGeoBatchIPAddressesConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
-        connection = client.Client(api_key = api_key_sample)
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.GetGeoBatchIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.geolocated_ip_list[0].geoip.address, dto.geolocated_ip_list[0].ip_address)
-        self.assertEqual(dto.geolocated_ip_list[1].geoip.address, dto.geolocated_ip_list[1].ip_address)
-        self.assertEqual(dto.geolocated_ip_list[2].geoip.address, dto.geolocated_ip_list[2].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[0].geoip.address, dto.geolocated_ip_list[0].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[1].geoip.address, dto.geolocated_ip_list[1].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[2].geoip.address, dto.geolocated_ip_list[2].ip_address)
+
+    def testGeoBatchIPAddressesConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetGeoBatchIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(
+            dto.geolocated_ip_list[0].geoip.address, dto.geolocated_ip_list[0].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[1].geoip.address, dto.geolocated_ip_list[1].ip_address)
+        self.assertEqual(
+            dto.geolocated_ip_list[2].geoip.address, dto.geolocated_ip_list[2].ip_address)
+        self.assertEqual(3, len(dto.json['response']))
 
     def testGeoBatchIPAddressesConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
-        connection = client.Client(api_key = api_key_sample)
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.GetGeoBatchIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def testCheckGoodDomainConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         domain_sample = 'google.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
@@ -168,61 +208,101 @@ class ClientTestCase(unittest.TestCase):
     def testCheckGoodDomainConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         domain_sample = 'google.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def testCheckBadDomainConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         domain_sample = 'mailinator.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertNotEqual(dto.response.score, 0)
-        self.assertEqual('betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
         self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
         self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
 
+    def testCheckBadDomainConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        domain_sample = 'mailinator.com'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckDomain(domain_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertNotEqual(dto.response.score, 0)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
+        self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
+        self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
+        self.assertEqual(-2, dto.json['response']['score'])
+
     def testCheckBadDomainConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         domain_sample = 'mailinator.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def tesCheckGoodBatchDomainConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         domain_sample = ['google.com', 'marca.com', 'facebook.com']
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckBatchDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.domain_scoring_list[0].domain, 'google.com')
-        self.assertEqual(dto.domain_scoring_list[1].domain, 'marca.com')
-        self.assertEqual(dto.domain_scoring_list[2].domain, 'facebook.com')
+        self.assertIn(dto.domain_scoring_list[0].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
+        self.assertIn(dto.domain_scoring_list[1].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
+        self.assertIn(dto.domain_scoring_list[2].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
         self.assertEqual(dto.domain_scoring_list[0].scoring.score, 0)
         self.assertEqual(dto.domain_scoring_list[1].scoring.score, 0)
         self.assertEqual(dto.domain_scoring_list[2].scoring.score, 0)
 
+    def tesCheckGoodBatchDomainConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        domain_sample = ['google.com', 'marca.com', 'facebook.com']
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckBatchDomain(domain_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertIn(dto.domain_scoring_list[0].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
+        self.assertIn(dto.domain_scoring_list[1].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
+        self.assertIn(dto.domain_scoring_list[2].domain, [
+                      'google.com', 'marca.com', 'facebook.com'])
+        self.assertEqual(dto.domain_scoring_list[0].scoring.score, 0)
+        self.assertEqual(dto.domain_scoring_list[1].scoring.score, 0)
+        self.assertEqual(dto.domain_scoring_list[2].scoring.score, 0)
+        self.assertEqual(3, len(dto.json['response']))
+
     def tesCheckGoodBatchDomainConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         domain_sample = ['google.com', 'marca.com', 'facebook.com']
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckBatchDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def tesCheckBadBatchDomainConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         domain_sample = ['loketa.com', 'mailinator.com', 'zixoa.com']
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckBatchDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.domain_scoring_list[0].domain, 'loketa.com')
-        self.assertEqual(dto.domain_scoring_list[1].domain, 'zixoa.com')
-        self.assertEqual(dto.domain_scoring_list[2].domain, 'mailinator.com')
+        self.assertIn(dto.domain_scoring_list[0].domain, [
+                      'loketa.com', 'mailinator.com', 'zixoa.com'])
+        self.assertIn(dto.domain_scoring_list[1].domain, [
+                      'loketa.com', 'mailinator.com', 'zixoa.com'])
+        self.assertIn(dto.domain_scoring_list[2].domain, [
+                      'loketa.com', 'mailinator.com', 'zixoa.com'])
         self.assertNotEqual(dto.domain_scoring_list[0].scoring.score, 0)
         self.assertNotEqual(dto.domain_scoring_list[1].scoring.score, 0)
         self.assertNotEqual(dto.domain_scoring_list[2].scoring.score, 0)
@@ -230,19 +310,20 @@ class ClientTestCase(unittest.TestCase):
     def tesCheckBadBatchDomainConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         domain_sample = ['loketa.com', 'mailinator.com', 'zixoa.com']
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckBatchDomain(domain_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def testCheckGoodEmailConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         email_sample = 'devops@apility.io'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.response.score, 0)
-        self.assertEqual('pam.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'pam.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('aspmx.l.google.com' in dto.response.domain.mx, True)
         self.assertEqual(dto.response.disposable.is_disposable, False)
         self.assertEqual(dto.response.freemail.is_freemail, False)
@@ -253,19 +334,20 @@ class ClientTestCase(unittest.TestCase):
     def testCheckGoodEmailConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         email_sample = 'devops@apility.io'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
     def testCheckBadEmailConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         email_sample = 'test@mailinator.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertNotEqual(dto.response.score, 0)
-        self.assertEqual('betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
         self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
         self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
         self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
@@ -274,10 +356,29 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.response.address.is_well_formed, True)
         self.assertEqual(dto.response.smtp.exist_address, True)
 
+    def testCheckBadEmailConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        email_sample = 'test@mailinator.com'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckEmail(email_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertNotEqual(dto.response.score, 0)
+        self.assertEqual(
+            'betty.ns.cloudflare.com' in dto.response.domain.ns, True)
+        self.assertEqual('mail.mailinator.com' in dto.response.domain.mx, True)
+        self.assertEqual('DEA' in dto.response.domain.blacklist_mx, True)
+        self.assertEqual('IVOLO-DED-IP' in dto.response.ip.blacklist, True)
+        self.assertEqual(dto.response.disposable.is_disposable, True)
+        self.assertEqual(dto.response.address.is_role, False)
+        self.assertEqual(dto.response.address.is_well_formed, True)
+        self.assertEqual(dto.response.smtp.exist_address, True)
+        self.assertEqual(-4, dto.json['response']['score'])
+
     def testCheckBadEmailConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         email_sample = 'test@mailinator.com'
-        connection = client.Client(api_key = api_key_sample)
+        connection = client.Client(api_key=api_key_sample)
         dto = connection.CheckEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
 
@@ -290,11 +391,16 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.email_scoring_list[0].email, 'devops@apility.io')
         self.assertEqual(dto.email_scoring_list[0].scoring.score, 0)
-        self.assertEqual(dto.email_scoring_list[0].scoring.disposable.is_disposable, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_role, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_well_formed, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.disposable.is_disposable, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_role, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_well_formed, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.smtp.exist_address, True)
 
     def tesCheckGoodBatchEmailConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
@@ -310,13 +416,41 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.CheckBatchEmail(email_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.email_scoring_list[0].email, 'test@mailinator.com')
+        self.assertEqual(
+            dto.email_scoring_list[0].email, 'test@mailinator.com')
         self.assertNotEqual(dto.email_scoring_list[0].scoring.score, 0)
-        self.assertEqual(dto.email_scoring_list[0].scoring.disposable.is_disposable, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_role, False)
-        self.assertEqual(dto.email_scoring_list[0].scoring.address.is_well_formed, True)
-        self.assertEqual(dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.disposable.is_disposable, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_role, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_well_formed, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+
+    def tesCheckBadBatchEmailConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        email_sample = ['test@mailinator.com']
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.CheckBatchEmail(email_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(
+            dto.email_scoring_list[0].email, 'test@mailinator.com')
+        self.assertNotEqual(dto.email_scoring_list[0].scoring.score, 0)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.disposable.is_disposable, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.freemail.is_freemail, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_role, False)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.address.is_well_formed, True)
+        self.assertEqual(
+            dto.email_scoring_list[0].scoring.smtp.exist_address, True)
+        self.assertEqual(1, len(dto.json['response']))
 
     def tesCheckBadBatchEmailConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
@@ -334,6 +468,17 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.asystem.name, 'Google LLC')
         self.assertEqual(dto.asystem.asn, '15169')
+
+    def testASIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = '8.8.8.8'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetASbyIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.asystem.name, 'Google LLC')
+        self.assertEqual(dto.asystem.asn, '15169')
+        self.assertEqual(dto.json['as']['asn'], '15169')
 
     def testASPrivateIPAddressConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
@@ -366,6 +511,17 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.asystem.name, 'Google LLC')
         self.assertEqual(dto.asystem.asn, '15169')
+        self.assertEqual(dto.json['as']['asn'], '15169')
+
+    def testASNumConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        asnum_sample = 15169
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetASbyNum(asnum_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.asystem.name, 'Google LLC')
+        self.assertEqual(dto.asystem.asn, '15169')
 
     def testASNumConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
@@ -376,18 +532,30 @@ class ClientTestCase(unittest.TestCase):
 
     def testASBatchIPAddressesConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
         connection = client.Client(api_key=api_key_sample)
         dto = connection.GetASBatchByIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.asystem_ip_list[0].asystem.asn, '15169')
-        self.assertEqual(dto.asystem_ip_list[1].asystem.asn, '19281')
-        self.assertEqual(dto.asystem_ip_list[2].asystem.asn, '15169')
+        self.assertIn(dto.asystem_ip_list[0].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_ip_list[1].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_ip_list[2].asystem.asn, ['15169', '19281'])
+
+    def testASBatchIPAddressesConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetASBatchByIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertIn(dto.asystem_ip_list[0].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_ip_list[1].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_ip_list[2].asystem.asn, ['15169', '19281'])
+        self.assertEqual(3, len(dto.json['response']))
 
     def testASBatchIPAddressesConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
-        ip_sample = ['8.8.8.8','9.9.9.9','8.8.4.4']
+        ip_sample = ['8.8.8.8', '9.9.9.9', '8.8.4.4']
         connection = client.Client(api_key=api_key_sample)
         dto = connection.GetASBatchByIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.bad_request)
@@ -399,8 +567,19 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.GetASBatchByNum(asn_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
-        self.assertEqual(dto.asystem_asn_list[0].asystem.asn, '15169')
-        self.assertEqual(dto.asystem_asn_list[1].asystem.asn, '19281')
+        self.assertIn(dto.asystem_asn_list[0].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_asn_list[1].asystem.asn, ['15169', '19281'])
+
+    def testASBatchNumConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        asn_sample = [15169, 19281]
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetASBatchByNum(asn_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertIn(dto.asystem_asn_list[0].asystem.asn, ['15169', '19281'])
+        self.assertIn(dto.asystem_asn_list[1].asystem.asn, ['15169', '19281'])
+        self.assertEqual(2, len(dto.json['response']))
 
     def testASBatchNumConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
@@ -419,6 +598,17 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.whois.entities[0], 'CLEAN-97')
         self.assertEqual(dto.whois.asn, '19281')
 
+    def testWhoisIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = '9.9.9.9'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetWhoisIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.whois.entities[0], 'CLEAN-97')
+        self.assertEqual(dto.whois.asn, '19281')
+        self.assertEqual('19281', dto.json['whois']['asn'])
+
     def testWhoisIPAddressConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
         ip_sample = '9.9.9.9'
@@ -434,7 +624,18 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.history[0].ip, '1.2.3.4')
-        self.assertEqual(len(dto.history[0].blacklist_change)>0, True)
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+
+    def testHistoryIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        ip_sample = '1.2.3.4'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetHistoryIP(ip_sample)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.history[0].ip, '1.2.3.4')
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+        self.assertGreater(len(dto.json['changes_ip']), 0)
 
     def testHistoryDomainConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
@@ -444,7 +645,18 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.history[0].domain, 'mailinator.com')
-        self.assertEqual(len(dto.history[0].blacklist_change)>0, True)
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+
+    def testHistoryDomainConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        domain = 'mailinator.com'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetHistoryDomain(domain)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.history[0].domain, 'mailinator.com')
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+        self.assertGreater(len(dto.json['changes_domain']), 0)
 
     def testHistoryEmailConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
@@ -454,7 +666,18 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
         self.assertEqual(dto.error, None)
         self.assertEqual(dto.history[0].email, 'test@mailinator.com')
-        self.assertEqual(len(dto.history[0].blacklist_change)>0, True)
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+
+    def testHistoryEmailConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        email = 'test@mailinator.com'
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetHistoryEmail(email)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        self.assertEqual(dto.history[0].email, 'test@mailinator.com')
+        self.assertEqual(len(dto.history[0].blacklist_change) > 0, True)
+        self.assertGreater(len(dto.json['changes_email']), 0)
 
     def testQuarantineIPAddressConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
@@ -469,6 +692,20 @@ class ClientTestCase(unittest.TestCase):
                 return
         self.assertNotEqual(dto.error, None)
 
+    def testQuarantineIPAddressConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetQuarantineIP()
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        for obj in dto.quarantine:
+            if obj.ip == '1.2.3.4':
+                self.assertEqual(obj.ip, '1.2.3.4')
+                self.assertEqual(obj.ttl, -1)
+                self.assertGreater(len(dto.json['quarantined']), 0)
+                return
+        self.assertNotEqual(dto.error, None)
+
     def testQuarantineCountryConnectionApiKey(self):
         api_key_sample = TEST_KEY_SAMPLE
         connection = client.Client(api_key=api_key_sample)
@@ -479,6 +716,20 @@ class ClientTestCase(unittest.TestCase):
             if obj.country == 'AQ':
                 self.assertEqual(obj.country, 'AQ')
                 self.assertEqual(obj.ttl, -1)
+                return
+        self.assertNotEqual(dto.error, None)
+
+    def testQuarantineCountryConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        connection = client.Client(api_key=api_key_sample)
+        dto = connection.GetQuarantineCountry()
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        for obj in dto.quarantine:
+            if obj.country == 'AQ':
+                self.assertEqual(obj.country, 'AQ')
+                self.assertEqual(obj.ttl, -1)
+                self.assertGreater(len(dto.json['quarantined']), 0)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -499,6 +750,36 @@ class ClientTestCase(unittest.TestCase):
             if obj.continent == 'AN':
                 self.assertEqual(obj.continent, 'AN')
                 self.assertLessEqual(obj.ttl, 3600)
+                dto = connection.DeleteQuarantineContinent(continent)
+                self.assertEqual(dto.status_code, requests.codes.ok)
+                return
+        self.assertNotEqual(dto.error, None)
+
+        dto = connection.DeleteQuarantineContinent(continent)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+
+    def testQuarantineContinentConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        connection = client.Client(api_key=api_key_sample)
+
+        continent = 'an'
+        dto = connection.AddQuarantineContinent(continent)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+
+        time.sleep(2)
+
+        dto = connection.GetQuarantineContinent()
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        for obj in dto.quarantine:
+            if obj.continent == 'AN':
+                self.assertEqual(obj.continent, 'AN')
+                self.assertLessEqual(obj.ttl, 3600)
+
+                self.assertGreater(len(dto.json['quarantined']), 0)
+
+                dto = connection.DeleteQuarantineContinent(continent)
+                self.assertEqual(dto.status_code, requests.codes.ok)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -522,6 +803,34 @@ class ClientTestCase(unittest.TestCase):
             if obj.asn == '360000':
                 self.assertEqual(obj.asn, '360000')
                 self.assertLessEqual(obj.ttl, 3600)
+                return
+        self.assertNotEqual(dto.error, None)
+
+        dto = connection.DeleteQuarantineAS(asn)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+
+    def testQuarantineASConnectionApiKeyJSON(self):
+        api_key_sample = TEST_KEY_SAMPLE
+        connection = client.Client(api_key=api_key_sample)
+
+        asn = 360000
+        dto = connection.AddQuarantineAS(asn)
+        self.assertEqual(dto.status_code, requests.codes.ok)
+
+        time.sleep(2)
+
+        dto = connection.GetQuarantineAS()
+        self.assertEqual(dto.status_code, requests.codes.ok)
+        self.assertEqual(dto.error, None)
+        for obj in dto.quarantine:
+            if obj.asn == '360000':
+                self.assertEqual(obj.asn, '360000')
+                self.assertLessEqual(obj.ttl, 3600)
+
+                self.assertGreater(len(dto.json['quarantined']), 0)
+
+                dto = connection.DeleteQuarantineAS(asn)
+                self.assertEqual(dto.status_code, requests.codes.ok)
                 return
         self.assertNotEqual(dto.error, None)
 
@@ -682,5 +991,5 @@ class ClientTestCase(unittest.TestCase):
                 return
         self.assertEqual(dto.error, None)
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    unittest.main()
