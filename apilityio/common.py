@@ -65,7 +65,7 @@ _DEPRECATED_VERSION_TEMPLATE = (
     'order to benefit from important security improvements and ensure '
     'compatibility with this library, upgrade to Python 2.7.9 or higher.')
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 _COMMON_LIB_SIG = 'apilityio/%s' % VERSION
 _LOGGING_KEY = 'logging'
 _PYTHON_VERSION = 'Python/%d.%d.%d' % (_PY_VERSION_MAJOR,
