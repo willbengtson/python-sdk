@@ -1,6 +1,10 @@
-f7e543e (HEAD -> dev) Latest readme.md but still missing the refernce to ReadTheDocs
+6a83fe8 (HEAD -> dev) Added new 'json' property to all Reponse objects with the raw JSON response from the API.
+97d0433 (origin/master, origin/dev, origin/HEAD, master) Formatted code with autopep8 and passed pylint. Still warning about lines too long.
+0279706 (tag: v0.0.2) Added reference to Read the Docs and badges
+9a6c127 (tag: v0.0.1) Changelog updated
+f7e543e Latest readme.md but still missing the refernce to ReadTheDocs
 f17da6d Added quickstart and cross references
-a332443 (origin/dev) Add examples of basic usage of the API library
+a332443 Add examples of basic usage of the API library
 1950bb6 New readme documentation (in progress)
 b4a9aca Sphinx documentation
 54f2498 Added extensive documentation to the public methods and attributes
@@ -24,4 +28,4 @@ bb9d4f7 Simplify build and test process: using setup.py and unittest
 83b583b Comments on how to use the APILITYIO_API_KEY
 8c3e14b Sample documents to test CI
 3189636 First commit of python API library
-1662746 (origin/master, origin/HEAD, master) Initial commit
+1662746 Initial commit
