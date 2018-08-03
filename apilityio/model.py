@@ -236,7 +236,7 @@ class IPGeodata(object):
 
         Attributes:
           - ``ip_address``: the ip address of the pair
-          - ``geodata``: an Object :func:`~apilityio.model.GeoIP` object with the geodata information
+          - ``geoip``: an Object :func:`~apilityio.model.GeoIP` object with the geodata information
         """
 
     def __init__(self, ip_address, geodata):
