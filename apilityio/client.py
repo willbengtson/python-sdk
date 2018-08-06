@@ -98,7 +98,7 @@ class Client(object):
 
     def _ValidateIPList(self, ip_addresses):
         """Validate if all the elements are well formated ip address list
-        """
+        """        
         if ip_addresses is None or len(ip_addresses) == 0:
             raise errors.ApilityioValueError('Empty list.')
         try:
