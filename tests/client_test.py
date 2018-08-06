@@ -23,7 +23,7 @@ import apilityio.client as client
 import apilityio.common as common
 
 TEST_WRONG_KEY_SAMPLE = '123dcfe6-63d3-3cd2-b427-75d1b1c117ed'
-MAX_ITERATIONS = 10
+MAX_ITERATIONS = 20
 
 # To test the API, you have to pass a valid API KEY as an exported environment variable first:
 # export APILITYIO_API_KEY=<YOUR_API_KEY>
@@ -881,14 +881,17 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineContinent(continent)
         self.assertEqual(dto.status_code, requests.codes.ok)
-        dto = connection.GetQuarantineContinent()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.continent == 'AN':
-                self.assertEqual(obj.continent, 'AN')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+
+        for idx in range(MAX_ITERATIONS):
+            time.sleep(1)
+            dto = connection.GetQuarantineContinent()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.continent == 'AN':
+                    self.assertEqual(obj.continent, 'AN')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testAddQuarantineASDefaultTTLConnectionApiKey(self):
@@ -897,14 +900,17 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineAS(asnum)
         self.assertEqual(dto.status_code, requests.codes.ok)
-        dto = connection.GetQuarantineAS()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.asn == '360000':
-                self.assertEqual(obj.asn, '360000')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+
+        for idx in range(MAX_ITERATIONS):
+            time.sleep(1)
+            dto = connection.GetQuarantineAS()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.asn == '360000':
+                    self.assertEqual(obj.asn, '360000')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testDeleteQuarantineIPAddressConnectionApiKey(self):
