@@ -373,7 +373,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.response.address.is_role, False)
         self.assertEqual(dto.response.address.is_well_formed, True)
         self.assertEqual(dto.response.smtp.exist_address, True)
-        self.assertEqual(-4, dto.json['response']['score'])
+        self.assertEqual(-3, dto.json['response']['score'])
 
     def testCheckBadEmailConnectionWrongApiKey(self):
         api_key_sample = TEST_WRONG_KEY_SAMPLE
