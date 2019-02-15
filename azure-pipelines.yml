@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-  api_key: '$(api_key_secret)'
+  apilityio_api_key: '$(api_key_secret)'
 
 jobs:
 
