@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-- global_variable:  '$(api_key_secret)'
+- api_key:  '$(api_key_secret)'
 jobs:
 
 - job: 'Test'
