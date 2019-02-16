@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import unittest
+import xmlrunner
 import requests
 import time
 import os
@@ -991,6 +992,3 @@ class ClientTestCase(unittest.TestCase):
                 self.assertTrue(True)
                 return
         self.assertEqual(dto.error, None)
-
-# if __name__ == '__main__':
-#    unittest.main()

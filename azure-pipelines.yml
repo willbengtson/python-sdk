@@ -36,11 +36,12 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      python -m unittest tests.client_test.ClientTestCase
+      python apility-runner.py
     displayName: 'test'
 
   - task: PublishTestResults@2
     inputs:
+      testResultsFormat: 'JUnit'
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
