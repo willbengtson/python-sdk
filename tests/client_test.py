@@ -767,7 +767,7 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineContinent(continent)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        for x in range(0,10):
+        for x in range(0,20):
             time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
