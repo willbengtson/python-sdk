@@ -743,7 +743,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
 
-        for x in range(0,10):
+        for x in range(0,100):
             time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
@@ -768,7 +768,7 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineContinent(continent)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        for x in range(0,20):
+        for x in range(0,100):
             time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
@@ -796,7 +796,7 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineAS(asn)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        for x in range(0,10):
+        for x in range(0,100):
             time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
@@ -819,7 +819,7 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineAS(asn)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        for x in range(0,10):
+        for x in range(0,100):
             time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
@@ -846,16 +846,16 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineIP(ip_sample)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        time.sleep(2)
-
-        dto = connection.GetQuarantineIP()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.ip == '9.9.9.9':
-                self.assertEqual(obj.ip, '9.9.9.9')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+        for x in range(0,100):
+            time.sleep(2)
+            dto = connection.GetQuarantineIP()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.ip == '9.9.9.9':
+                    self.assertEqual(obj.ip, '9.9.9.9')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testAddQuarantineCountryDefaultTTLConnectionApiKey(self):
@@ -865,16 +865,16 @@ class ClientTestCase(unittest.TestCase):
         dto = connection.AddQuarantineCountry(country)
         self.assertEqual(dto.status_code, requests.codes.ok)
 
-        time.sleep(2)
-
-        dto = connection.GetQuarantineCountry()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.country == 'PN':
-                self.assertEqual(obj.country, 'PN')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+        for x in range(0,100):
+            time.sleep(2)
+            dto = connection.GetQuarantineCountry()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.country == 'PN':
+                    self.assertEqual(obj.country, 'PN')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testAddQuarantineContinentDefaultTTLConnectionApiKey(self):
@@ -883,14 +883,17 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineContinent(continent)
         self.assertEqual(dto.status_code, requests.codes.ok)
-        dto = connection.GetQuarantineContinent()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.continent == 'AN':
-                self.assertEqual(obj.continent, 'AN')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+
+        for x in range(0,100):
+            time.sleep(2)
+            dto = connection.GetQuarantineContinent()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.continent == 'AN':
+                    self.assertEqual(obj.continent, 'AN')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testAddQuarantineASDefaultTTLConnectionApiKey(self):
@@ -899,14 +902,17 @@ class ClientTestCase(unittest.TestCase):
         connection = client.Client(api_key=api_key_sample)
         dto = connection.AddQuarantineAS(asnum)
         self.assertEqual(dto.status_code, requests.codes.ok)
-        dto = connection.GetQuarantineAS()
-        self.assertEqual(dto.status_code, requests.codes.ok)
-        self.assertEqual(dto.error, None)
-        for obj in dto.quarantine:
-            if obj.asn == '360000':
-                self.assertEqual(obj.asn, '360000')
-                self.assertLessEqual(obj.ttl, 3600)
-                return
+
+        for x in range(0,100):
+            time.sleep(2)
+            dto = connection.GetQuarantineAS()
+            self.assertEqual(dto.status_code, requests.codes.ok)
+            self.assertEqual(dto.error, None)
+            for obj in dto.quarantine:
+                if obj.asn == '360000':
+                    self.assertEqual(obj.asn, '360000')
+                    self.assertLessEqual(obj.ttl, 3600)
+                    return
         self.assertNotEqual(dto.error, None)
 
     def testDeleteQuarantineIPAddressConnectionApiKey(self):
