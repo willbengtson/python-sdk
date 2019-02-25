@@ -8,7 +8,6 @@ trigger:
 
 variables:
   apilityio_api_key: '$(api_key_secret)'
-  twine_password: '$(twine_password)'
 
 jobs:
 
