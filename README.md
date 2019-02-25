@@ -54,8 +54,8 @@ Examples
 --------
 If you would like to obtain example code for any of the included client libraries, you can find it on our **examples** folder.
 
-Contact Us
-----------
+Contact Us!
+-----------
 Do you have an issue using the Apilityio Client Libraries? Or perhaps some feedback for how we can improve them? Feel free to let us know on our _`issue tracker <https://github.com/Apilityio/python-lib/issues>`_.
 
 
