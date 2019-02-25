@@ -8,6 +8,7 @@ trigger:
 
 variables:
   apilityio_api_key: '$(api_key_secret)'
+  twine_password: '$(twine_password)'
 
 jobs:
 
@@ -16,12 +17,6 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   strategy:
     matrix:
-      Python27:
-        python.version: '2.7'
-      Python35:
-        python.version: '3.5'
-      Python36:
-        python.version: '3.6'
       Python37:
         python.version: '3.7'
     maxParallel: 1
@@ -58,4 +53,7 @@ jobs:
       architecture: 'x64'
 
   - script: python setup.py sdist
-    displayName: 'Build sdist'
+    displayName: 'Build sdist...'
+
+  - script: twine upload -r PrivatePyPI -p $(twine_password) --config-file .pypirc ./dist/*
+    displayName: 'Publish in PrivatePypi with twine...'
