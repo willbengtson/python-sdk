@@ -30,7 +30,8 @@ DEPENDENCIES = ['requests>=2.0.0,<3.0.0', 'validators>=0.12.2,<1.0.0', 'py2-ipad
 
 # Note: Breaking change introduced in pyfakefs 3.3.
 TEST_DEPENDENCIES = ['mock>=2.0.0,<3.0.0', 'pyfakefs>=3.2,<3.3',
-                     'six>=1.11.0,<2.0.0', 'validators>=0.12.2,<1.0.0']
+                     'six>=1.11.0,<2.0.0', 'validators>=0.12.2,<1.0.0',
+                     'unittest-xml-reporting']
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',

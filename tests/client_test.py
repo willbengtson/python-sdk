@@ -15,6 +15,7 @@ limitations under the License.
 """
 
 import unittest
+import xmlrunner
 import requests
 import time
 import os
@@ -23,7 +24,7 @@ import apilityio.client as client
 import apilityio.common as common
 
 TEST_WRONG_KEY_SAMPLE = '123dcfe6-63d3-3cd2-b427-75d1b1c117ed'
-MAX_ITERATIONS = 20
+MAX_ITERATIONS = 10
 
 # To test the API, you have to pass a valid API KEY as an exported environment variable first:
 # export APILITYIO_API_KEY=<YOUR_API_KEY>
@@ -742,7 +743,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -767,7 +768,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -795,7 +796,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -818,7 +819,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -845,7 +846,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineIP()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -864,7 +865,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineCountry()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -883,7 +884,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -902,7 +903,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -925,7 +926,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineIP()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -947,7 +948,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineCountry()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -969,7 +970,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineContinent()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -991,7 +992,7 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(dto.status_code, requests.codes.ok)
 
         for idx in range(MAX_ITERATIONS):
-            time.sleep(1)
+            time.sleep(2)
             dto = connection.GetQuarantineAS()
             self.assertEqual(dto.status_code, requests.codes.ok)
             self.assertEqual(dto.error, None)
@@ -1000,6 +1001,3 @@ class ClientTestCase(unittest.TestCase):
                     self.assertTrue(True)
                     return
         self.assertEqual(dto.error, None)
-
-# if __name__ == '__main__':
-#    unittest.main()
