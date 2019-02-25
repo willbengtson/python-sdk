@@ -5,7 +5,7 @@ python:
     - "3.5"
     - "3.6"
 install:
-    - python setup.py -q install
+    - python setup.py -q install && pip install unittest-xml-reporting
 script:
     python -m unittest tests.client_test.ClientTestCase
 notifications:
