@@ -57,5 +57,5 @@ jobs:
   - script: pip install twine
     displayName: 'Install twine...'
 
-  - script: twine upload -r PrivatePyPI -p $(twine_password) --config-file .pypirc ./dist/*
-    displayName: 'Publish in PrivatePypi with twine...'
+  - script: twine upload -r MyPyPI -p $(twine_password) --config-file .pypirc ./dist/*
+    displayName: 'Publish in MyPypi with twine...'
