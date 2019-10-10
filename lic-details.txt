@@ -1,0 +1,4 @@
+ Name           Version  License             URL                                      Description                                  
+ apilityio-lib  0.0.3    Apache License 2.0  https://github.com/Apilityio/python-lib  Apility.io Python Client Library             
+ decorator      4.4.0    new BSD License     https://github.com/micheles/decorator    Better living through Python with decorators 
+ validators     0.14.0   BSD                 https://github.com/kvesteri/validators   Python Data Validation for Humans™.          
